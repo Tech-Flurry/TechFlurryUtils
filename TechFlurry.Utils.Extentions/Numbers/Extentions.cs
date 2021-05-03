@@ -96,5 +96,18 @@ namespace TechFlurry.Utils.Extentions.Numbers
         {
             return string.Format("{0:#,#.00}", Convert.ToDecimal(number));
         }
+        public static string ToNumberedDigits(this int number, int digits = 1)
+        {
+            if (number == 0)
+            {
+                return number.ToString();
+            }
+            var format = string.Empty;
+            for (int i = 0; i < digits; i++)
+            {
+                format += "0";
+            }
+            return number.ToString(format);
+        }
     }
 }
