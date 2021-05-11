@@ -1,10 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TechFlurry.Authorization.WebAssembly.Abstractions;
@@ -17,14 +14,14 @@ namespace TechFlurry.Authorization.WebAssembly.Core
     internal class AuthenticationService : IAuthenticationService
     {
         private const string GRANT_TYPE = "grant_type";
-        private const string USERNAME = "username";
         private const string PASSWORD = "password";
-        private readonly IHttpClientProvider _httpClientProvider;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
-        private readonly ILocalStorageService _localStorage;
+        private const string USERNAME = "username";
+        private const string BEARER = "bearer";
         private readonly IAuthenticationAPI _authenticationAPI;
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly HttpClient _httpclient;
-
+        private readonly IHttpClientProvider _httpClientProvider;
+        private readonly ILocalStorageService _localStorage;
         public AuthenticationService(IHttpClientProvider httpClientProvider, AuthenticationStateProvider authenticationStateProvider, ILocalStorageService localStorage, IAuthenticationAPI authenticationAPI)
         {
             _httpClientProvider = httpClientProvider;
@@ -33,6 +30,7 @@ namespace TechFlurry.Authorization.WebAssembly.Core
             _authenticationAPI = authenticationAPI;
             _httpclient = httpClientProvider.GetHttpClient();
         }
+
         public async Task<AuthenticatedUser> Login(Credentials credentials)
         {
             var data = new FormUrlEncodedContent(new[]
@@ -53,14 +51,15 @@ namespace TechFlurry.Authorization.WebAssembly.Core
             });
             await _localStorage.SetItemAsync(Constants.TOKEN_NAME, result.Access_Token);
             ((AuthStateProvider)_authenticationStateProvider).NotifyUserAuthentication(result.Access_Token);
-            _httpClientProvider.AddHeader("bearer", result.Access_Token);
+            _httpClientProvider.AddHeader(BEARER, result.Access_Token);
             return result;
         }
+
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync(Constants.TOKEN_NAME);
             ((AuthStateProvider)_authenticationStateProvider).NotifyUserLogout();
-            _httpClientProvider.RemoveAllHeaders();
+            _httpClientProvider.RemoveHeader(BEARER);
         }
     }
 }

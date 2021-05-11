@@ -22,9 +22,9 @@ namespace TechFlurry.Authorization.WebAssembly.Infrastructure
             services.AddTransient<IAuthenticationService, TAuthenticationSerivce>();
         }
 
-        public static void UseAuthenticationService<TAuthenticationAPI>(this IServiceCollection services) where TAuthenticationAPI : class, IAuthenticationAPI
+        public static void UseAuthenticationService(this IServiceCollection services, string authenticationAPI)
         {
-            services.AddScoped<IAuthenticationAPI, TAuthenticationAPI>();
+            services.AddScoped<IAuthenticationAPI>(x => new AuthenticationAPI(authenticationAPI));
             services.AddTransient<IAuthenticationService, AuthenticationService>();
         }
     }
