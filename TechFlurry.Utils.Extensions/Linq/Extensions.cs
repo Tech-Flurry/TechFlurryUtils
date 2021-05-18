@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TechFlurry.Utils.Extentions.Linq
+namespace TechFlurry.Utils.Extensions.Linq
 {
-    public static class Extentions
+    public static class Extensions
     {
         private static readonly Random _random = new Random();
         public static IEnumerable<T> Sample<T>(this IEnumerable<T> enumerable, int size)

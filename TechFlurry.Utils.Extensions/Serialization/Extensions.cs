@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace TechFlurry.Utils.Extentions.Serialization
+namespace TechFlurry.Utils.Extensions.Serialization
 {
-    public static class Extentions
+    public static class Extensions
     {
         public static string ToJson(this object obj)
         {

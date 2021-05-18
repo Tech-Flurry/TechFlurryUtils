@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TechFlurry.Utils.Extentions.Numbers
+namespace TechFlurry.Utils.Extensions.Numbers
 {
-    public static class Extentions
+    public static class Extensions
     {
         /// <summary>
         /// Convert an integer to a numeric word

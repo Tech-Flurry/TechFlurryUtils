@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace TechFlurry.Utils.Extentions.Strings
+namespace TechFlurry.Utils.Extensions.Strings
 {
-    public static class Extentions
+    public static class Extensions
     {
         /// <summary>
         /// Converts a string to first word as uppercase other small

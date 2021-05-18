@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 
-namespace TechFlurry.Utils.Extentions.Data
+namespace TechFlurry.Utils.Extensions.Data
 {
-    public static class Extentions
+    public static class Extensions
     {
         /// <summary>
         /// Converts a List or array to a datatable

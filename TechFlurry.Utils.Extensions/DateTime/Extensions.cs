@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TechFlurry.Utils.Extentions.DateTime
+namespace TechFlurry.Utils.Extensions.DateTime
 {
-    public static class Extentions
+    public static class Extensions
     {
         /// <summary>
         /// Returns a passed time from a particular date 

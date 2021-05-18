@@ -3,9 +3,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace TechFlurry.Utils.Extentions.DependencyInjection
+namespace TechFlurry.Utils.Extensions.DependencyInjection
 {
-    public static class Extentions
+    public static class Extensions
     {
         public static IServiceCollection AddSingletonsByConvention(this IServiceCollection services, Assembly assembly, Func<Type, bool> interfacePredicate, Func<Type, bool> implementationPredicate)
         {
