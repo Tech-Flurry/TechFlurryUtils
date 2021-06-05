@@ -50,8 +50,8 @@ namespace TechFlurry.Authorization.WebAssembly.Core
                 PropertyNameCaseInsensitive = true
             });
             await _localStorage.SetItemAsync(Constants.TOKEN_NAME, result.Access_Token);
-            ((AuthStateProvider)_authenticationStateProvider).NotifyUserAuthentication(result.Access_Token);
             _httpClientProvider.AddHeader(BEARER, result.Access_Token);
+            ((AuthStateProvider)_authenticationStateProvider).NotifyUserAuthentication(result.Access_Token);
             return result;
         }
 
