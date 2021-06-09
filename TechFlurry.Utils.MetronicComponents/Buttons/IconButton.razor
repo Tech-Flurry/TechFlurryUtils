@@ -1,0 +1,65 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Common
+@using System.Text
+
+@if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
+{
+    <a class="@css">
+        @Icon
+    </a>
+}
+else
+{
+    <a class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">
+        @Icon
+    </a>
+}
+
+<a class="@css">
+    @Icon
+</a>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    public RenderFragment Icon { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public bool IsLightColor { get; set; }
+    [Parameter]
+    public bool IsOutlineButton { get; set; }
+    [Parameter]
+    public string ToolTip { get; set; }
+    [Parameter]
+    public Positions ToolTipPosition { get; set; }
+    [Parameter]
+    public ButtonSizes? Size { get; set; }
+    [Parameter]
+    public bool IsDisabled { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+
+    string css;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        StringBuilder cssBuilder = new StringBuilder();
+        cssBuilder.Append($"btn btn-icon btn-{(IsLightColor ? "light-" : IsOutlineButton ? "outline-" : string.Empty)}{Color.ToString().ToLower()}");
+
+        if (Size is not null)
+        {
+            cssBuilder.Append($" btn-{Size?.ToString().ToLower()}");
+        }
+        if (IsDisabled)
+        {
+            cssBuilder.Append(" disabled");
+        }
+        css = cssBuilder.ToString();
+        base.OnAfterRender(firstRender);
+    }
+}

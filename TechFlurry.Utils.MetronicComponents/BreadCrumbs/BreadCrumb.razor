@@ -1,0 +1,24 @@
+﻿
+
+<div class="d-flex align-items-center flex-wrap mr-1">
+
+    <!--begin::Page Heading-->
+    <div class="d-flex align-items-baseline flex-wrap mr-5">
+        <!--begin::Page Title-->
+        <h5 class="text-primary font-weight-bolder mt-2 mb-2 mr-5">
+            @PageName
+        </h5>
+        <!--end::Page Title-->
+        <!--begin::Breadcrumb-->
+        <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
+            @ChildContent
+        </ul>
+        <!--end::Breadcrumb-->
+    </div>
+    <!--end::Page Heading-->
+</div>
+
+@code { [Parameter]
+            public string PageName { get; set; }
+            [Parameter]
+            public RenderFragment ChildContent { get; set; } }

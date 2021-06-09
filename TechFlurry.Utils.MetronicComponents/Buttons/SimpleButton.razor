@@ -1,0 +1,90 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Common
+@using System.Text
+
+@if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
+{
+    if (!IsDisabled)
+    {
+        <button class="@css" disabled>@Title</button>
+    }
+    else
+    {
+        <button class="@css">@Title</button>
+    }
+}
+else
+{
+    if (!IsDisabled)
+    {
+        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">@Title</button>
+    }
+    else
+    {
+        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" disabled>@Title</button>
+    }
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public bool IsLightColor { get; set; }
+    [Parameter]
+    public string ToolTip { get; set; }
+    [Parameter]
+    public bool IsBlockButton { get; set; }
+    [Parameter]
+    public bool IsLinkButton { get; set; }
+    [Parameter]
+    public Positions ToolTipPosition { get; set; }
+    [Parameter]
+    public FontWeights? FontWeight { get; set; }
+    [Parameter]
+    public bool IsActive { get; set; }
+    [Parameter]
+    public ButtonSizes? Size { get; set; }
+    [Parameter]
+    public bool IsDisabled { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+
+    string css;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        StringBuilder cssBuilder = new StringBuilder();
+        if (!IsLinkButton)
+        {
+            cssBuilder.Append($"btn btn-{(IsLightColor ? "light-" : string.Empty)}{Color.ToString().ToLower()}");
+        }
+        else
+        {
+            cssBuilder.Append($"btn btn-link");
+        }
+        if (IsBlockButton)
+        {
+            cssBuilder.Append(" btn-block");
+        }
+        if (FontWeight is not null)
+        {
+            cssBuilder.Append($" font-weight-{FontWeight?.ToString().ToLower()}");
+        }
+        if (Size is not null)
+        {
+            cssBuilder.Append($" btn-{Size?.ToString().ToLower()}");
+        }
+        if (IsActive)
+        {
+            cssBuilder.Append(" active");
+        }
+        css = cssBuilder.ToString();
+        base.OnAfterRender(firstRender);
+    }
+}

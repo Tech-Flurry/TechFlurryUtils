@@ -1,0 +1,29 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Common
+
+
+@{
+    css = ShowPulse == true ? $"pulse pulse-{color}" : string.Empty;
+}
+
+@ChildContent(css)
+
+
+
+@code {
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public RenderFragment<string> ChildContent { get; set; }
+    [Parameter]
+    public bool IsLightColor { get; set; }
+    [Parameter]
+    public bool ShowPulse { get; set; }
+    string color;
+    string css;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        color = (Color.ToString().ToLower()) + (IsLightColor ? "-light" : string.Empty);
+
+    }
+}

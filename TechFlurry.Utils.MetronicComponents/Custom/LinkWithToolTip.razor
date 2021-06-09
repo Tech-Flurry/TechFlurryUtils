@@ -1,0 +1,18 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Common
+
+<a class="@CssClass" @attributes="@InputAttributes" data-toggle="tooltip" title="@Title" data-placement="@Position.ToString().ToLower()">
+    @ChildContent
+</a>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public Positions Position { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+}

@@ -1,0 +1,63 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Models
+@using Microsoft.AspNetCore.Components.Web
+
+@{
+    string activeClass = IsActive || (SubMenu?.Any(x => x.IsActive) ?? false)
+                                ? "menu-item-active" : string.Empty;
+}
+
+@if (SubMenu?.Count > 0)
+{
+    <li class="menu-item @activeClass menu-item-submenu @(Parent==null?"menu-item-rel": string.Empty)" data-menu-toggle="click" aria-haspopup="true">
+        <a href="javascript:;" class="menu-link menu-toggle">
+            @Icon.Invoke("menu-icon")
+            <span class="menu-text">@Text</span>
+            <i class="menu-arrow"></i>
+        </a>
+        <div class="menu-submenu menu-submenu-classic menu-submenu-left">
+            <ul class="menu-subnav">
+                @foreach (var item in SubMenu?.OrderBy(x => x.Text))
+                {
+                    <SubMenuItem ActionLink="@item.ActionLink" Text="@item.Text" IsActive="item.IsActive" SubMenu="item.SubMenu" IsLineBullet="true" OnClick="item.OnClick"></SubMenuItem>
+                }
+            </ul>
+        </div>
+    </li>
+}
+else
+{
+    <li class="menu-item @activeClass" aria-haspopup="true">
+        @if (OnClick is not null)
+        {
+            <a @onclick="OnClick" class="menu-link">
+                @Icon?.Invoke("menu-icon")
+                <span class="menu-text">@Text</span>
+            </a>
+        }
+        else
+        {
+            <a href="@ActionLink" class="menu-link">
+                @Icon?.Invoke("menu-icon")
+                <span class="menu-text">@Text</span>
+            </a>
+        }
+    </li>
+}
+
+
+@code {
+    [Parameter]
+    public MenuItemModel Parent { get; set; }
+    [Parameter]
+    public List<MenuItemModel> SubMenu { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string ActionLink { get; set; }
+    [Parameter]
+    public bool IsActive { get; set; }
+    [Parameter]
+    public RenderFragment<string> Icon { get; set; }
+    [Parameter]
+    public Action OnClick { get; set; }
+}

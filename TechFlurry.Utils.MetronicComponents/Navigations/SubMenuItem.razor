@@ -1,0 +1,69 @@
+﻿@using TechFlurry.Utils.MetronicComponents.Models
+@using Microsoft.AspNetCore.Components.Web
+
+<li class="menu-item @(SubMenu?.Count > 0 ? "menu-item-submenu" : string.Empty)" data-menu-toggle="hover" aria-haspopup="true">
+    @if (OnClick is not null)
+    {
+        <a @onclick="OnClick" class="menu-link menu-toggle">
+            @if (string.IsNullOrEmpty(Icon))
+            {
+                <i class="menu-bullet menu-bullet-@(IsLineBullet?"line":"dot") menu-icon"><span></span></i>
+            }
+            else
+            {
+                <i class="@Icon menu-icon"><span></span></i>
+            }
+            <span class="menu-text">@Text</span>
+            @if (SubMenu?.Count > 0)
+            {
+                <i class="menu-arrow"></i>
+            }
+        </a>
+    }
+    else
+    {
+        <a href="@ActionLink" class="menu-link menu-toggle">
+            @if (string.IsNullOrEmpty(Icon))
+            {
+                <i class="menu-bullet menu-bullet-@(IsLineBullet?"line":"dot") menu-icon"><span></span></i>
+            }
+            else
+            {
+                <i class="@Icon menu-icon"><span></span></i>
+            }
+            <span class="menu-text">@Text</span>
+            @if (SubMenu?.Count > 0)
+            {
+                <i class="menu-arrow"></i>
+            }
+        </a>
+    }
+    @if (SubMenu?.Count > 0)
+    {
+        <div class="menu-submenu menu-submenu-classic menu-submenu-right">
+            <ul class="menu-subnav">
+                @foreach (var item in SubMenu?.OrderBy(x => x.Text))
+                {
+                    <SubMenuItem ActionLink="@item.ActionLink" Text="@item.Text" IsActive="item.IsActive" SubMenu="item.SubMenu" IsLineBullet="!IsLineBullet" OnClick="item.OnClick"></SubMenuItem>
+                }
+            </ul>
+        </div>
+    }
+</li>
+
+@code {
+    [Parameter]
+    public List<MenuItemModel> SubMenu { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string ActionLink { get; set; }
+    [Parameter]
+    public bool IsActive { get; set; }
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public bool IsLineBullet { get; set; }
+    [Parameter]
+    public Action OnClick { get; set; }
+}
