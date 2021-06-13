@@ -52,5 +52,19 @@ namespace TechFlurry.Utils.Extensions.Linq
             list[indexB] = tmp;
             return list;
         }
+        public static void ApplyAll<T>(this IEnumerable<T> source, Predicate<T> predicate, Action<T> action)
+        {
+            foreach (T element in source.Where(x => predicate.Invoke(x)))
+            {
+                action(element);
+            }
+        }
+        public static void ApplyAll<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (T element in source)
+            {
+                action(element);
+            }
+        }
     }
 }

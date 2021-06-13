@@ -1,5 +1,4 @@
-﻿@using TechFlurry.Utils.MetronicComponents.Models
-@using Microsoft.AspNetCore.Components.Web
+﻿
 
 @{
     string activeClass = IsActive || (SubMenu?.Any(x => x.IsActive) ?? false)
@@ -18,7 +17,14 @@
             <ul class="menu-subnav">
                 @foreach (var item in SubMenu?.OrderBy(x => x.Text))
                 {
-                    <SubMenuItem ActionLink="@item.ActionLink" Text="@item.Text" IsActive="item.IsActive" SubMenu="item.SubMenu" IsLineBullet="true" OnClick="item.OnClick"></SubMenuItem>
+                    @if (item.OnClick is null)
+                    {
+                        <SubMenuItem ActionLink="@item.ActionLink" Text="@item.Text" IsActive="item.IsActive" SubMenu="item.SubMenu" IsLineBullet="true"></SubMenuItem>
+                    }
+                    else
+                    {
+                        <SubMenuItem ActionLink="@item.ActionLink" Text="@item.Text" IsActive="item.IsActive" SubMenu="item.SubMenu" IsLineBullet="true" OnClick="OnClick"></SubMenuItem>
+                    }
                 }
             </ul>
         </div>
