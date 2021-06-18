@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -41,18 +42,22 @@ namespace TechFlurry.Authorization.WebAssembly.Core
             });
             var authResult = await _httpclient.PostAsync(_authenticationAPI.TokenAPIAddress, data);
             var authContent = await authResult.Content.ReadAsStringAsync();
-            if (!authResult.IsSuccessStatusCode)
+            if (authResult.IsSuccessStatusCode)
             {
-                return null;
+                var result = JsonSerializer.Deserialize<AuthenticatedUser>(authContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                var task = _localStorage.SetItemAsync(Constants.TOKEN_NAME, result.Access_Token).AsTask();
+                await task;
+                if (task.Status == TaskStatus.RanToCompletion)
+                {
+                    _httpClientProvider.AddHeader(BEARER, result.Access_Token);
+                    ((AuthStateProvider)_authenticationStateProvider).NotifyUserAuthentication(result.Access_Token);
+                    return result;
+                }
             }
-            var result = JsonSerializer.Deserialize<AuthenticatedUser>(authContent, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            await _localStorage.SetItemAsync(Constants.TOKEN_NAME, result.Access_Token);
-            _httpClientProvider.AddHeader(BEARER, result.Access_Token);
-            ((AuthStateProvider)_authenticationStateProvider).NotifyUserAuthentication(result.Access_Token);
-            return result;
+            return null;
         }
 
         public async Task Logout()
