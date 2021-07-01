@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Muhammad Umair Tahir</Authors>
+    <Company>TechFlurry</Company>
+    <Product>TechFlurry.Utils</Product>
+    <Description>Reusable Library for Developer Utility</Description>
+    <Copyright>2021</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
