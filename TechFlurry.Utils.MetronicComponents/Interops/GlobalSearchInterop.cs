@@ -60,7 +60,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
                     }
                     else
                     {
-                        html = data.Message;
+                        html = GetMessageHtml(data.Message);
                     }
                     await module.InvokeVoidAsync("successResult", html);
                 }
@@ -76,7 +76,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         }
         private static string GetMessageHtml(string message)
         {
-            return $@"<div class=""text-muted d-none"">
+            return $@"<div class=""text-muted"">
                         {message}
                     </div>";
         }
@@ -98,10 +98,10 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
                                         </div>
                                         <div class=""d-flex flex-column ml-3 mt-2 mb-2"">
                                             <a href=""{item.ActionLink}"" class=""font-weight-bold text-dark text-hover-primary"">
-                                                {item.Title}
+                                                {HighlightMarkedText(item.Title)}
                                             </a>
                                             <span class=""font-size-sm font-weight-bold text-muted"">
-                                                {item.SubTitle}
+                                                {HighlightMarkedText(item.SubTitle)}
                                             </span>
                                         </div>
                                     </div>");
@@ -109,6 +109,18 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
                 html.Append("</div>");
             }
             return html.ToString();
+        }
+        private static string HighlightMarkedText(string content)
+        {
+            if (!content.ToLower().Contains("#s#"))
+            {
+                return content;
+            }
+            var markedString = content.Replace("#s#", "<mark>")
+                                       .Replace("#S#", "<mark>")
+                                       .Replace("#e#", "</mark>")
+                                       .Replace("#E#", "</mark>");
+            return markedString;
         }
     }
 }
