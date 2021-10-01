@@ -12,6 +12,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
     public interface IGlobalSearchInterop
     {
         void Init(string elementId, string iconId);
+        void Init(string elementId, string iconId, string highlightedStartTag, string highlightedEndTag);
         void InitSearchFunction(Func<string, Task<SearchResultDataModel>> searchFunction);
     }
 
@@ -20,6 +21,8 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         private readonly IJSRuntime _jsRuntime;
         private Func<string, Task<SearchResultDataModel>> _searchFunction;
         private Task<IJSObjectReference> _module;
+        private bool isHighlighted = false;
+        private string highlightedStartTag, highlightedEndTag;
 
         public GlobalSearchInterop(IJSRuntime jsRuntime)
         {
@@ -30,6 +33,18 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
 
         public async void Init(string elementId, string iconId)
         {
+            var module = await Module;
+            await module.InvokeVoidAsync("initWithCallback", elementId, DotNetObjectReference.Create(this), nameof(Search), iconId);
+        }
+        public async void Init(string elementId, string iconId, string highlightedStartTag, string highlightedEndTag)
+        {
+            if (highlightedStartTag is not null && !string.IsNullOrEmpty(highlightedEndTag))
+            {
+                this.highlightedEndTag = highlightedEndTag;
+                this.highlightedStartTag = highlightedStartTag;
+                isHighlighted = true;
+            }
+
             var module = await Module;
             await module.InvokeVoidAsync("initWithCallback", elementId, DotNetObjectReference.Create(this), nameof(Search), iconId);
         }
@@ -80,7 +95,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
                         {message}
                     </div>";
         }
-        private static string GetSearchResultHtml(List<SearchResultModel> model)
+        private string GetSearchResultHtml(List<SearchResultModel> model)
         {
             StringBuilder html = new();
             string prevGroup = string.Empty;
@@ -110,16 +125,16 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
             }
             return html.ToString();
         }
-        private static string HighlightMarkedText(string content)
+        private string HighlightMarkedText(string content)
         {
-            if (!content.ToLower().Contains("#s#"))
+            if (!isHighlighted)
             {
                 return content;
             }
-            var markedString = content.Replace("#s#", "<mark>")
-                                       .Replace("#S#", "<mark>")
-                                       .Replace("#e#", "</mark>")
-                                       .Replace("#E#", "</mark>");
+            var markedString = content.Replace(highlightedStartTag, "<mark>")
+                                       //.Replace("#S#", "<mark>")
+                                       .Replace(highlightedEndTag, "</mark>");
+            //.Replace("#E#", "</mark>");
             return markedString;
         }
     }

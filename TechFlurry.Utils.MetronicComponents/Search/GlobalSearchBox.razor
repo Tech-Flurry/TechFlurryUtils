@@ -34,7 +34,7 @@
                             </span>
                         </span>
                     </div>
-                    <input type="text" class="form-control" placeholder="Search..." />
+                    <input type="text" class="form-control" placeholder="@Placeholder" />
                     <div class="input-group-append">
                         <span class="input-group-text">
                             <i class="quick-search-close ki ki-close icon-sm text-muted"></i>
@@ -56,11 +56,17 @@
 @code {
     [Parameter]
     public ThemeColors? Color { get; set; }
+    [Parameter]
+    public string Placeholder { get; set; } = "Search...";
+    [Parameter]
+    public string HighlightStartTag { get; set; } = null;
+    [Parameter]
+    public string HighlightEndTag { get; set; } = null;
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
-            Interop.Init("kt_quick_search_dropdown", "kt_quick_search");
+            Interop.Init("kt_quick_search_dropdown", "kt_quick_search", "#s#", "#e#");
         }
         base.OnAfterRender(firstRender);
     }
