@@ -29,7 +29,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
             _jsRuntime = jsRuntime;
         }
 
-        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"./{Constants.CONTENT_BASE_PATH}js/global-search-interop.js").AsTask();
+        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"../{Constants.CONTENT_BASE_PATH}js/global-search-interop.js").AsTask();
 
         public async void Init(string elementId, string iconId)
         {

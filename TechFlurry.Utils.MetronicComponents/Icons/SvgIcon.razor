@@ -1,6 +1,6 @@
 ﻿
 
-<span class="@css">
+<span class="@css" @attributes="InputAttributes">
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
         @switch (Name.ToLower())
         {
@@ -90,6 +90,8 @@
     public IconSizes? Size { get; set; }
     [Parameter]
     public string CssClass { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
     string css;
     protected override void OnInitialized()
     {

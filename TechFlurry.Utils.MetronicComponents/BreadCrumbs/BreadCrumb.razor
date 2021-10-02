@@ -6,7 +6,14 @@
     <div class="d-flex align-items-baseline flex-wrap mr-5">
         <!--begin::Page Title-->
         <h5 class="text-primary font-weight-bolder mt-2 mb-2 mr-5">
-            @PageName
+            @if (IsHome)
+            {
+                <TechFlurry.Utils.MetronicComponents.Icons.SvgIcon Color="ThemeColors.Primary" Name="home" Size="IconSizes._2x" title="@PageName" />
+            }
+            else
+            {
+                @PageName
+            }
         </h5>
         <!--end::Page Title-->
         <!--begin::Breadcrumb-->
@@ -19,6 +26,8 @@
 </div>
 
 @code { [Parameter]
-            public string PageName { get; set; }
-            [Parameter]
-            public RenderFragment ChildContent { get; set; } }
+    public string PageName { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool IsHome { get; set; }}
