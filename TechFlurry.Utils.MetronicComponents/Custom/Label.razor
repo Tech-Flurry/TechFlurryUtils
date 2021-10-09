@@ -1,0 +1,59 @@
+﻿
+@if (LabelType != LabelTypes.Dot)
+{
+    <span class="label @css">
+        @Text
+    </span>
+}
+else
+{
+    <span class="label label-dot label-@Color.ToString().ToLower()">
+    </span>
+}
+
+@code {
+    string css = string.Empty;
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public LabelTypes LabelType { get; set; }
+    [Parameter]
+    public FontWeights FontWeight { get; set; }
+    [Parameter]
+    public LabelSizes Size { get; set; }
+    [Parameter]
+    public bool IsLight { get; set; }
+    [Parameter]
+    public bool IsOutLined { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        StringBuilder cssBuilder = new StringBuilder();
+        if (IsLight)
+        {
+            cssBuilder.Append($" label-light-{Color.ToString().ToLower()}");
+        }
+        else if (IsOutLined)
+        {
+            cssBuilder.Append($" label-outline-{Color.ToString().ToLower()}");
+        }
+        else
+        {
+            cssBuilder.Append($" label-{Color.ToString().ToLower()}");
+        }
+        if (LabelType == LabelTypes.Pill)
+        {
+            cssBuilder.Append(" label-pill label-inline");
+        }
+        else
+        {
+            cssBuilder.Append($" label-{LabelType.ToString().ToLower()}");
+        }
+        cssBuilder.Append($" font-weight-{FontWeight.ToString().ToLower()}");
+        cssBuilder.Append($" label-{Size.ToString().ToLower()}");
+        css = cssBuilder.ToString();
+        base.OnParametersSet();
+    }
+}

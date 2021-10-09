@@ -30,6 +30,13 @@
         Sm,
         Xs
     }
+    public enum LabelSizes
+    {
+        Sm,
+        Md,
+        Lg,
+        Xl
+    }
     public enum IconSizes
     {
         Sm,
@@ -45,5 +52,13 @@
         _8x,
         _9x,
         _10x
+    }
+    public enum LabelTypes
+    {
+        Rounded,
+        Square,
+        Inline,
+        Pill,
+        Dot
     }
 }
