@@ -1,0 +1,93 @@
+﻿
+<div class="ribbon ribbon-@Position.ToString().ToLower() @(IsClip?"ribbon-clip":string.Empty)">
+    @if (IsClip)
+    {
+        <div class="ribbon-target" style="@style">
+            <span class="ribbon-inner bg-@Color.ToString().ToLower()">
+            </span>
+            @if (Icon is not null)
+            {
+                @Icon.Invoke("text-white")
+            }
+            else
+            {
+                @Text
+            }
+        </div>
+    }
+    else
+    {
+        <div class="ribbon-target bg-@Color.ToString().ToLower()" style="@style">
+            @if (Icon is not null)
+            {
+                @Icon.Invoke("text-white")
+            }
+            else
+            {
+                @Text
+            }
+        </div>
+    }
+    @ChildContent
+</div>
+
+@code {
+    string style;
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public RenderFragment<string> Icon { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public Positions Position { get; set; }
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public bool IsClip { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        switch (Position)
+        {
+            case Positions.Left:
+                if (!IsClip)
+                {
+                    style = "top: 10px; left: -2px;";
+                }
+                else
+                {
+                    if (Icon is not null)
+                    {
+                        style = "top: 15px; height: 45px;";
+                    }
+                    else
+                    {
+                        style = "top: 12px;";
+                    }
+                }
+                break;
+            case Positions.Right:
+                @if (IsClip)
+                {
+                    if (Icon is not null)
+                    {
+                        style = "top: 15px; height: 45px;";
+                    }
+                    else
+                    {
+                        style = "top: 12px;";
+                    }
+                }
+                else
+                {
+                    style = "top: 10px; right: -2px;";
+                }
+                break;
+            case Positions.Top:
+                style = "top: -2px; right: 20px;";
+                break;
+        }
+        base.OnParametersSet();
+    }
+}

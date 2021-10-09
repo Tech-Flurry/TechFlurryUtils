@@ -27,7 +27,8 @@
     public enum ButtonSizes
     {
         Lg,
-        Sm
+        Sm,
+        Xs
     }
     public enum IconSizes
     {

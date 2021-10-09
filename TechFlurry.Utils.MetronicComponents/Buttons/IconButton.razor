@@ -1,25 +1,23 @@
 ﻿
 @if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
 {
-    <a class="@css">
-        @Icon
+    <a class="@css" title="@Title">
+        @ChildContent
     </a>
 }
 else
 {
     <a class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">
-        @Icon
+        @ChildContent
     </a>
 }
 
-<a class="@css">
-    @Icon
-</a>
 
 @code {
     [Parameter]
     public string Title { get; set; }
-    public RenderFragment Icon { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
     [Parameter]
     public string CssClass { get; set; }
     [Parameter]
@@ -36,6 +34,8 @@ else
     public ButtonSizes? Size { get; set; }
     [Parameter]
     public bool IsDisabled { get; set; }
+    [Parameter]
+    public bool IsRounded { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> InputAttributes { get; set; }
 
@@ -44,10 +44,15 @@ else
     {
         base.OnInitialized();
     }
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnParametersSet()
     {
         StringBuilder cssBuilder = new StringBuilder();
-        cssBuilder.Append($"btn btn-icon btn-{(IsLightColor ? "light-" : IsOutlineButton ? "outline-" : string.Empty)}{Color.ToString().ToLower()}");
+        cssBuilder.Append(CssClass);
+        cssBuilder.Append($" btn btn-icon btn-{(IsLightColor ? "light-" : IsOutlineButton ? "outline-" : string.Empty)}{Color.ToString().ToLower()}");
+        if (IsRounded)
+        {
+            cssBuilder.Append(" btn-circle");
+        }
 
         if (Size is not null)
         {
@@ -58,6 +63,11 @@ else
             cssBuilder.Append(" disabled");
         }
         css = cssBuilder.ToString();
+        base.OnParametersSet();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+
         base.OnAfterRender(firstRender);
     }
 }
