@@ -3,22 +3,22 @@
 {
     if (!IsDisabled)
     {
-        <button class="@css" disabled>@Title</button>
+        <button class="@css" disabled title="@Title">@ChildContent</button>
     }
     else
     {
-        <button class="@css">@Title</button>
+        <button class="@css" title="@Title">@ChildContent</button>
     }
 }
 else
 {
     if (!IsDisabled)
     {
-        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">@Title</button>
+        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">@ChildContent</button>
     }
     else
     {
-        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" disabled>@Title</button>
+        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" disabled>@ChildContent</button>
     }
 }
 
@@ -31,6 +31,8 @@ else
     public ThemeColors Color { get; set; }
     [Parameter]
     public bool IsLightColor { get; set; }
+    [Parameter]
+    public bool IsOutlined { get; set; }
     [Parameter]
     public string ToolTip { get; set; }
     [Parameter]
@@ -46,6 +48,8 @@ else
     [Parameter]
     public ButtonSizes? Size { get; set; }
     [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
     public bool IsDisabled { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> InputAttributes { get; set; }
@@ -55,12 +59,12 @@ else
     {
         base.OnInitialized();
     }
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnParametersSet()
     {
         StringBuilder cssBuilder = new StringBuilder();
         if (!IsLinkButton)
         {
-            cssBuilder.Append($"btn btn-{(IsLightColor ? "light-" : string.Empty)}{Color.ToString().ToLower()}");
+            cssBuilder.Append($"btn btn-{(IsLightColor ? "light-" : IsOutlined ? "outline-" : string.Empty)}{Color.ToString().ToLower()}");
         }
         else
         {
@@ -83,6 +87,10 @@ else
             cssBuilder.Append(" active");
         }
         css = cssBuilder.ToString();
+        base.OnParametersSet();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
         base.OnAfterRender(firstRender);
     }
 }

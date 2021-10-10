@@ -7,7 +7,7 @@
 }
 else
 {
-    <span class="label label-dot label-@Color.ToString().ToLower()">
+    <span class="label label-dot label-@Color.ToString().ToLower() @CssClass">
     </span>
 }
 
@@ -27,10 +27,13 @@ else
     public bool IsLight { get; set; }
     [Parameter]
     public bool IsOutLined { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
 
     protected override void OnParametersSet()
     {
         StringBuilder cssBuilder = new StringBuilder();
+        cssBuilder.Append(CssClass);
         if (IsLight)
         {
             cssBuilder.Append($" label-light-{Color.ToString().ToLower()}");
