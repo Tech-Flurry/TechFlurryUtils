@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace TechFlurry.Utils.Extensions.Strings
 {
@@ -61,6 +62,16 @@ namespace TechFlurry.Utils.Extensions.Strings
         public static string ToUnderscoreCase(this string s)
         {
             return string.Concat(s.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString()));
+        }
+        /// <summary>
+        /// Appends the string with spaces between them
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static StringBuilder AppendWord(this StringBuilder stringBuilder, string value)
+        {
+            return stringBuilder.Append(" " + value);
         }
     }
 }

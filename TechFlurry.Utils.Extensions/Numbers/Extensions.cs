@@ -109,5 +109,52 @@ namespace TechFlurry.Utils.Extensions.Numbers
             }
             return number.ToString(format);
         }
+        public static int ToNearestMultiple(this int number, int factor)
+        {
+            if (number % factor != 0)
+            {
+                int nearestMultiple = (int)Math.Round((number / (double)factor), MidpointRounding.AwayFromZero) * factor;
+                return nearestMultiple;
+            }
+            else
+            {
+                return number;
+            }
+        }
+        public static int ToNearestMultiple(this int number, int factor, int endsTo, int startsFrom = 0)
+        {
+            var multiple = number.ToNearestMultiple(factor);
+            return multiple.ToRange(startsFrom, endsTo);
+        }
+        public static int ToRange(this int number, int startsFrom, int endsTo)
+        {
+            number = Math.Max(number, startsFrom);
+            number = Math.Min(number, endsTo);
+            return number;
+        }
+        public static short ToRange(this short number, short startsFrom, short endsTo)
+        {
+            number = Math.Max(number, startsFrom);
+            number = Math.Min(number, endsTo);
+            return number;
+        }
+        public static long ToRange(this long number, long startsFrom, long endsTo)
+        {
+            number = Math.Max(number, startsFrom);
+            number = Math.Min(number, endsTo);
+            return number;
+        }
+        public static decimal ToRange(this decimal number, decimal startsFrom, decimal endsTo)
+        {
+            number = Math.Max(number, startsFrom);
+            number = Math.Min(number, endsTo);
+            return number;
+        }
+        public static double ToRange(this double number, double startsFrom, double endsTo)
+        {
+            number = Math.Max(number, startsFrom);
+            number = Math.Min(number, endsTo);
+            return number;
+        }
     }
 }

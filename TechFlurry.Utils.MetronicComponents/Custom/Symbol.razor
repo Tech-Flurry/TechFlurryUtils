@@ -1,0 +1,82 @@
+﻿@using TechFlurry.Utils.Extensions.Numbers
+@using TechFlurry.Utils.Extensions.Strings
+
+<div class="symbol symbol-@size @css">
+    @if (Icon is not null)
+    {
+        <div class="symbol-label" @onclick="OnClick">@Icon</div>
+
+    }
+    else if (!string.IsNullOrEmpty(ImgSrc))
+    {
+        <div class="symbol-label" style="background-image: url('@ImgSrc')" @onclick="OnClick"></div>
+    }
+    else
+    {
+        <div class="symbol-label" @onclick="OnClick">@Text</div>
+    }
+</div>
+
+@code {
+    string css = string.Empty;
+    int size;
+    [Parameter]
+    public int Size { get; set; } = 50;
+    [Parameter]
+    public string ImgSrc { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public FontSizes FontSize { get; set; } = FontSizes.H5;
+    [Parameter]
+    public RenderFragment Icon { get; set; }
+    [Parameter]
+    public ThemeColors? Color { get; set; }
+    [Parameter]
+    public bool IsLight { get; set; }
+    [Parameter]
+    public bool IsCircle { get; set; }
+    [Parameter]
+    public bool IsFixed { get; set; }
+    [Parameter]
+    public bool Is2By3 { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public Action OnClick { get; set; }
+}
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        if (Size <= 100)
+        {
+            size = Size.ToNearestMultiple(5, 100, 20);
+        }
+        else
+        {
+            size = Size.ToNearestMultiple(10, 150, 120);
+        }
+        StringBuilder cssBuilder = new();
+        cssBuilder.Append(CssClass);
+        if (Color is not null)
+        {
+            cssBuilder.AppendWord("symbol-" + (IsLight ? "light-" : string.Empty) + Color?.ToString().ToLower());
+        }
+        if (IsCircle)
+        {
+            cssBuilder.AppendWord("symbol-circle");
+        }
+        if (IsFixed)
+        {
+            cssBuilder.AppendWord("symbol-fixed");
+        }
+        if (Is2By3)
+        {
+            cssBuilder.AppendWord("symbol-2by3");
+        }
+        css = cssBuilder.ToString();
+        base.OnParametersSet();
+    }
+
+}
