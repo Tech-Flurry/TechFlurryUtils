@@ -1,0 +1,27 @@
+﻿@if (string.IsNullOrEmpty(Href))
+{
+    <a class="alert-link" @attributes="InputAttributes" @onclick="OnClick??new EventCallback<MouseEventArgs>()">@Text</a>
+}
+
+@code {
+    [Parameter]
+    public string Href { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs>? OnClick { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+}
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (!string.IsNullOrEmpty(Href) && OnClick is null)
+        {
+            InputAttributes.Add("href", Href);
+        }
+    }
+}

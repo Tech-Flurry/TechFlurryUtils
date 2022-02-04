@@ -80,4 +80,15 @@
         Pill,
         Dot
     }
+    public enum AlertOutlineStyles
+    {
+        Style1,
+        Style2
+    }
+    public enum ShadowStyles
+    {
+        Default,
+        Sm,
+        Lg
+    }
 }

@@ -1,0 +1,24 @@
+﻿
+<div class="alert alert-@Color.ToString().ToLower() @CssClass" role="alert">
+    @if (ChildContent is null)
+    {
+        @Text
+    }
+    else
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+}

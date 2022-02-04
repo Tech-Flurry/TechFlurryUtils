@@ -1,0 +1,70 @@
+﻿@{
+    var shadowStyleClass = "shadow";
+    switch (ShadowStyle)
+    {
+        case ShadowStyles.Sm:
+            shadowStyleClass += "-sm";
+            break;
+        case ShadowStyles.Lg:
+            shadowStyleClass += "-lg";
+            break;
+    }
+}
+
+<div class="alert alert-custom @(IsNotice?"alert-notice":string.Empty) alert-@((IsLight?"light-":"")+Color.ToString().ToLower()) @(IsShadowed?shadowStyleClass:string.Empty) @CssClass" role="alert">
+    @if (Icon is not null)
+    {
+        <div class="alert-icon">@Icon</div>
+    }
+    @if (ChildContent is null)
+    {
+        <AlertText Text="@Text"></AlertText>
+    }
+    else
+    {
+        @ChildContent
+    }
+    @if (HasCloseButton)
+    {
+        <div class="alert-close">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="ki ki-close"></i></span>
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public AlertOutlineStyles Style { get; set; }
+    [Parameter]
+    public string CssClass { get; set; }
+    [Parameter]
+    public bool HasCloseButton { get; set; }
+    [Parameter]
+    public bool IsLight { get; set; }
+    [Parameter]
+    public bool IsNotice { get; set; }
+    [Parameter]
+    public bool IsShadowed { get; set; }
+    [Parameter]
+    public ShadowStyles ShadowStyle { get; set; }
+    [Parameter]
+    public RenderFragment Icon { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> InputAttributes { get; set; }
+}
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        IsLight = IsNotice;
+    }
+}
