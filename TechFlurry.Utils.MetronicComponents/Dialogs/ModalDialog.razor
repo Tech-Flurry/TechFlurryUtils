@@ -1,0 +1,176 @@
+﻿@using TechFlurry.Utils.Extensions.Strings
+@inject ICommonFunctions _functions
+
+
+<div class="modal @(IsFadedBg?"fade":"position-relative d-block")" id="@Id" @attributes="@modalAttributes">
+    @{
+        var modalSize = string.Empty;
+        switch (Size)
+        {
+            case ModalSizes.Lg:
+                modalSize = " modal-lg";
+                break;
+            case ModalSizes.Sm:
+                modalSize = " modal-sm";
+                break;
+            case ModalSizes.Xl:
+                modalSize = " modal-xl";
+                break;
+            default:
+                modalSize = string.Empty;
+                break;
+        }
+    }
+    <div class="modal-dialog @(IsScrollable?" modal-dialog-scrollable":"") @(IsCentered?" modal-dialog-centered":string.Empty) @modalSize" @attributes="dialogAttributes">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" @attributes="bodyAttributes">
+                @if (Body is not null)
+                {
+                    @Body
+                }
+                else
+                {
+                    @ChildContent
+                }
+            </div>
+            <div class="modal-footer@(FooterSecondaryRegion is not null?" justify-content-between":string.Empty)">
+                @if (FooterSecondaryRegion is not null)
+                {
+                    @FooterSecondaryRegion
+                }
+                <div>
+                    @if (ShowCloseButton)
+                    {
+                        <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Close</button>
+                    }
+                    @if (PrimaryButtonRegion is not null)
+                    {
+                        @PrimaryButtonRegion
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="OnPrimaryButtonClick">@PrimaryButtonText</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    Dictionary<string, object> modalAttributes = new(), dialogAttributes = new(), bodyAttributes = new(), footerAttributes = new();
+
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public RenderFragment Body { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool ShowCloseButton { get; set; }
+    [Parameter]
+    public string PrimaryButtonText { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnPrimaryButtonClick { get; set; }
+    [Parameter]
+    public RenderFragment PrimaryButtonRegion { get; set; }
+    [Parameter]
+    public RenderFragment FooterSecondaryRegion { get; set; }
+    [Parameter]
+    public bool IsScrollable { get; set; }
+    [Parameter]
+    public int? ScrollHeight { get; set; }
+    [Parameter]
+    public bool IsCentered { get; set; }
+    [Parameter]
+    public ModalSizes Size { get; set; }
+    [Parameter]
+    public bool IsFadedBg { get; set; }
+    [Parameter]
+    public int? Tabindex { get; set; }
+    [Parameter]
+    public bool ShowStaticBackdrop { get; set; }
+    [Parameter]
+    public Dictionary<string, object> AdditionalModalAttributes { get; set; }
+    [Parameter]
+    public Dictionary<string, object> AdditionalDialogAttributes { get; set; }
+    [Parameter]
+    public Dictionary<string, object> AdditionalBodyAttributes { get; set; }
+    [Parameter]
+    public Action OnModalShown { get; set; }
+    [Parameter]
+    public Action OnModalHidden { get; set; }
+}
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (string.IsNullOrEmpty(Id))
+        {
+            Id = Functions.GenerateElementId();
+        }
+        modalAttributes.Clear();
+        //setting up modal attributes
+        modalAttributes.Add("tabindex", (Tabindex ?? -1).ToString());
+        modalAttributes.Add("role", "dialog");
+        modalAttributes.Add("aria-labelledby", Title.ToCamelCase());
+        modalAttributes.Add("aria-hidden", "true");
+        if (AdditionalModalAttributes?.Any() ?? false)
+        {
+            foreach (var attr in AdditionalModalAttributes)
+            {
+                modalAttributes.Add(attr.Key, attr.Value);
+            }
+        }
+        dialogAttributes.Clear();
+        //setting up dialog attributes
+        dialogAttributes.Add("role", "document");
+        if (AdditionalDialogAttributes?.Any() ?? false)
+        {
+            foreach (var attr in AdditionalDialogAttributes)
+            {
+                dialogAttributes.Add(attr.Key, attr.Value);
+            }
+        }
+        //setting up body attributes
+        if (IsScrollable && ScrollHeight is null)
+        {
+            //If scrollable is selected but hieght is not given
+            ScrollHeight = 300; //add default height
+        }
+        bodyAttributes.Clear();
+        if (IsScrollable)
+        {
+            bodyAttributes.Add("data-scroll", "true");
+            bodyAttributes.Add("data-height", ScrollHeight?.ToString());
+        }
+        if (AdditionalBodyAttributes?.Any() ?? false)
+        {
+            foreach (var attr in AdditionalBodyAttributes)
+            {
+                bodyAttributes.Add(attr.Key, attr.Value);
+            }
+        }
+    }
+
+    public void Show()
+    {
+        _functions.ShowModal("#" + Id);
+        OnModalShown?.Invoke();
+    }
+    public void Hide()
+    {
+        _functions.HideModal("#" + Id);
+        OnModalHidden?.Invoke();
+    }
+}

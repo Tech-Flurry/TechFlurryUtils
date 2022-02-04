@@ -11,6 +11,8 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         Task<string> GetInnerHtmlAsync(ElementReference element);
 
         Task<MarkupString> GetMarkupHtmlAsync(ElementReference element);
+        void HideModal(string id);
+        void ShowModal(string id);
     }
 
     internal class CommonFunctions : IDisposable, ICommonFunctions
@@ -42,6 +44,16 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
             var module = await Module;
             var html = await module.InvokeAsync<string>("getInnerHtml", element);
             return (MarkupString)html;
+        }
+        public async void ShowModal(string id)
+        {
+            var module = await Module;
+            await module.InvokeAsync<string>("showModal", id);
+        }
+        public async void HideModal(string id)
+        {
+            var module = await Module;
+            await module.InvokeAsync<string>("hideModal", id);
         }
     }
 }

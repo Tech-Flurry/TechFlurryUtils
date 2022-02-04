@@ -49,6 +49,13 @@
         Lg,
         Xl
     }
+    public enum ModalSizes
+    {
+        Default,
+        Sm,
+        Lg,
+        Xl
+    }
     public enum IconSizes
     {
         Sm,

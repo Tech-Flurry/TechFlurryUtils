@@ -64,6 +64,28 @@ namespace TechFlurry.Utils.Extensions.Strings
             return string.Concat(s.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString()));
         }
         /// <summary>
+        /// Converts a word into camelCase
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string ToCamelCase(this string s)
+        {
+            if ((s?.Any() ?? false) && s.Length > 1)
+            {
+                s = s.Trim()
+                    .Replace("-", string.Empty)
+                    .Replace("_", string.Empty)
+                    .Replace(" ", string.Empty);
+                s = char.ToLowerInvariant(s[0]) + s.Substring(1);
+            }
+            else if (s?.Any() ?? false)
+            {
+                s = char.ToLowerInvariant(s[0]).ToString();
+            }
+            return s;
+        }
+
+        /// <summary>
         /// Appends the string with spaces between them
         /// </summary>
         /// <param name="stringBuilder"></param>
