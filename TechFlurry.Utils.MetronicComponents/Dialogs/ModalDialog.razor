@@ -47,7 +47,7 @@
                 <div>
                     @if (ShowCloseButton)
                     {
-                        <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light-dark mr-2" data-dismiss="modal">Close</button>
                     }
                     @if (PrimaryButtonRegion is not null)
                     {
@@ -88,6 +88,8 @@
     [Parameter]
     public bool IsScrollable { get; set; }
     [Parameter]
+    public string CloseText { get; set; }
+    [Parameter]
     public int? ScrollHeight { get; set; }
     [Parameter]
     public bool IsCentered { get; set; }
@@ -118,6 +120,10 @@
         if (string.IsNullOrEmpty(Id))
         {
             Id = Functions.GenerateElementId();
+        }
+        if (string.IsNullOrEmpty(CloseText))
+        {
+            CloseText = "Close";
         }
         modalAttributes.Clear();
         //setting up modal attributes

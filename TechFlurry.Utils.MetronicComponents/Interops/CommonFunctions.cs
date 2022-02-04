@@ -18,14 +18,16 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
     internal class CommonFunctions : IDisposable, ICommonFunctions
     {
         private readonly IJSRuntime _jsRuntime;
+        private readonly ApplicationInfo applicationInfo;
         private Task<IJSObjectReference> _module;
 
-        public CommonFunctions(IJSRuntime jsRuntime)
+        public CommonFunctions(IJSRuntime jsRuntime, ApplicationInfo applicationInfo)
         {
             _jsRuntime = jsRuntime;
+            this.applicationInfo = applicationInfo;
         }
 
-        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"./{Constants.CONTENT_BASE_PATH}js/commonFunctions.js").AsTask();
+        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"{applicationInfo.BaseUrl}{Constants.CONTENT_BASE_PATH}js/commonFunctions.js").AsTask();
 
         public void Dispose()
         {
