@@ -1,24 +1,26 @@
-﻿
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+
 @if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
 {
     if (!IsDisabled)
     {
-        <button class="@css" disabled title="@Title">@ChildContent</button>
+        <button @onclick="OnClick" @attributes="InputAttributes" class="@css" disabled title="@Title">@ChildContent</button>
     }
     else
     {
-        <button class="@css" title="@Title">@ChildContent</button>
+        <button @onclick="OnClick" @attributes="InputAttributes" class="@css" title="@Title">@ChildContent</button>
     }
 }
 else
 {
     if (!IsDisabled)
     {
-        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">@ChildContent</button>
+        <button @onclick="OnClick" @attributes="InputAttributes" class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">@ChildContent</button>
     }
     else
     {
-        <button class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" disabled>@ChildContent</button>
+        <button @onclick="OnClick" @attributes="InputAttributes" class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" disabled>@ChildContent</button>
     }
 }
 
@@ -51,6 +53,8 @@ else
     public RenderFragment ChildContent { get; set; }
     [Parameter]
     public bool IsDisabled { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> InputAttributes { get; set; }
 

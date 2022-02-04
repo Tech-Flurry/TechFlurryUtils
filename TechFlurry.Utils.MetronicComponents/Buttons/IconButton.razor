@@ -1,13 +1,15 @@
-﻿
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+
 @if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
 {
-    <a class="@css" title="@Title">
+    <a class="@css" title="@Title" @attributes="InputAttributes" @onclick="OnClick">
         @ChildContent
     </a>
 }
 else
 {
-    <a class="@css" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()">
+    <a class="@css" @onclick="OnClick" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" @attributes="InputAttributes">
         @ChildContent
     </a>
 }
@@ -36,6 +38,8 @@ else
     public bool IsDisabled { get; set; }
     [Parameter]
     public bool IsRounded { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> InputAttributes { get; set; }
 
