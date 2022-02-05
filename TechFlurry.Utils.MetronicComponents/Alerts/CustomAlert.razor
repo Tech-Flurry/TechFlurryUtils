@@ -65,6 +65,9 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        IsLight = IsNotice;
+        if (IsNotice)
+        {
+            IsLight = IsNotice;
+        }
     }
 }
