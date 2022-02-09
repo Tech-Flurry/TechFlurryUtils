@@ -165,9 +165,9 @@ namespace TechFlurry.Utils.Extensions.DateTime
         public static string ToWords(this TimeSpan span)
         {
             string s = "More than a month";
-            var mins = decimal.Round(Convert.ToDecimal(span.TotalMinutes));
-            var hrs = decimal.Round(Convert.ToDecimal(span.TotalHours));
-            var days = decimal.Round(Convert.ToDecimal(span.TotalDays));
+            var mins = decimal.Round(Convert.ToDecimal(span.TotalMinutes), 2);
+            var hrs = decimal.Round(Convert.ToDecimal(span.TotalHours), 2);
+            var days = decimal.Round(Convert.ToDecimal(span.TotalDays), 2);
             if (mins < 1)
             {
                 s = "Less than a min";
