@@ -91,4 +91,10 @@
         Sm,
         Lg
     }
+    public enum RadioStyles
+    {
+        Lg,
+        Square,
+        Rounded
+    }
 }

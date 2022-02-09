@@ -1,0 +1,85 @@
+﻿@using System.Globalization
+@using Microsoft.AspNetCore.Components.Forms
+@typeparam TValue
+@typeparam TDisplay
+@inherits InputBase<TValue>
+
+<div class="radio-@(IsInline?"inline":"list")">
+    @foreach (var item in Items)
+    {
+        <label class="radio @(Style is not null?$"radio-{Style?.ToString().ToLower()}":string.Empty) @(IsAccent?$"radio-accent":string.Empty) @(Color is not null?$"radio-{Color?.ToString().ToLower()}":string.Empty) @(IsOutlined || IsDoubledOutlined?$"radio-outline{(IsDoubledOutlined?" radio-outline-2x":string.Empty)}":string.Empty)">
+            @{
+                Dictionary<string, object> inputAttributes = new();
+                if (DisableExpression.Invoke(item.Key))
+                {
+                    inputAttributes.Add("disabled", "disabled");
+                }
+            }
+            <input type="radio" name="@name" @attributes="inputAttributes"
+               value="@item.Key" checked="@(item.Key.Equals(Value))" @onchange="OnChange" />
+            <span></span>
+            @ChildContent(item.Value)
+        </label>
+    }
+</div>
+@if (!string.IsNullOrEmpty(HelpText))
+{
+    <span class="form-text text-muted">@HelpText</span>
+}
+
+@code {
+    string name;
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public string HelpText { get; set; }
+    [Parameter]
+    public Dictionary<TValue, TDisplay> Items { get; set; }
+    [Parameter]
+    public bool IsInline { get; set; }
+    [Parameter]
+    public bool IsOutlined { get; set; }
+    [Parameter]
+    public bool IsDoubledOutlined { get; set; }
+    [Parameter]
+    public bool IsAccent { get; set; }
+    [Parameter]
+    public RadioStyles? Style { get; set; }
+    [Parameter]
+    public ThemeColors? Color { get; set; }
+    [Parameter]
+    public RenderFragment<TDisplay> ChildContent { get; set; }
+    [Parameter]
+    public Predicate<TValue> DisableExpression { get; set; }
+
+    private void OnChange(ChangeEventArgs args)
+    {
+        CurrentValueAsString = args.Value.ToString();
+    }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        name = string.IsNullOrEmpty(Name)
+                ? name = Functions.GenerateElementId()
+                : name = Name;
+    }
+
+    protected override bool TryParseValueFromString(string value, out TValue result, out string errorMessage)
+    {
+        var success = BindConverter.TryConvertTo<TValue>(value, CultureInfo.CurrentCulture, out var parsedValue);
+        if (success)
+        {
+            result = parsedValue;
+            errorMessage = null;
+
+            return true;
+        }
+        else
+        {
+            result = default;
+            errorMessage = $"{FieldIdentifier.FieldName} field isn't valid.";
+
+            return false;
+        }
+    }
+}
