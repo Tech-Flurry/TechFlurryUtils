@@ -1,0 +1,32 @@
+﻿
+@typeparam T
+@typeparam TDisplay
+@inherits CheckBoxGroupBase<T, TDisplay>
+
+
+<div class="checkbox-@(IsInline?"inline":"list")">
+    @foreach (var item in Items)
+    {
+        Dictionary<string, object> inputAttributes = new();
+        if (DisableExpression?.Invoke(item.Key)??false)
+        {
+            inputAttributes.Add("disabled", "disabled");
+        }
+        <label class="checkbox @(Style is not null?$"checkbox-{Style?.ToString().ToLower()}":string.Empty) @((DisableExpression?.Invoke(item.Key)??false)?$"checkbox-disabled":string.Empty) @(Color is not null?$"checkbox-{Color?.ToString().ToLower()}":string.Empty) @(IsOutlined || IsDoubledOutlined?$"checkbox-outline{(IsDoubledOutlined?" checkbox-outline-2x":string.Empty)}":string.Empty)">
+            <input type="checkbox" name="@Name" checked="@(Value?.Any(x=>x.Equals(item.Key)))" @onchange="e=>{OnChange(item.Key,e);}" value="@item.Key" @attributes="inputAttributes" />
+            <span></span>
+            @ChildContent(item.Value)
+        </label>
+    }
+</div>
+@if (!string.IsNullOrEmpty(HelpText))
+{
+    <span class="form-text text-muted">@HelpText</span>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment<TDisplay> ChildContent { get; set; }
+    [Parameter]
+    public Predicate<T> DisableExpression { get; set; }
+}

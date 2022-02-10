@@ -1,0 +1,75 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+@inherits InputBase<bool>
+
+<div class="checkbox-list">
+    <label class="checkbox @(Style is not null?$"checkbox-{Style?.ToString().ToLower()}":string.Empty) @(IsDisabled?$"checkbox-disabled":string.Empty) @(Color is not null?$"checkbox-{Color?.ToString().ToLower()}":string.Empty) @(IsOutlined || IsDoubledOutlined?$"checkbox-outline{(IsDoubledOutlined?" checkbox-outline-2x":string.Empty)}":string.Empty)">
+        <input type="checkbox" name="@Name" checked="@Value" @onchange="OnChange" value="@Guid.NewGuid().ToString()" @attributes="inputAttributes" />
+        <span></span>
+        @ChildContent
+    </label>
+</div>
+@if (!string.IsNullOrEmpty(HelpText))
+{
+    <span class="form-text text-muted">@HelpText</span>
+}
+
+@code {
+    protected string name;
+    protected Dictionary<string, object> inputAttributes = new();
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public string HelpText { get; set; }
+    [Parameter]
+    public bool IsOutlined { get; set; }
+    [Parameter]
+    public bool IsDoubledOutlined { get; set; }
+    [Parameter]
+    public RadioStyles? Style { get; set; }
+    [Parameter]
+    public ThemeColors? Color { get; set; }
+    [Parameter]
+    public bool IsDisabled { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public Action<bool> OnValueChanged { get; set; }
+
+
+    protected void OnChange(ChangeEventArgs args)
+    {
+        Value = !Value;
+        CurrentValueAsString = Value.ToString();
+        OnValueChanged?.Invoke(Value);
+    }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        name = string.IsNullOrEmpty(Name)
+                ? name = Functions.GenerateElementId()
+                : name = Name;
+        inputAttributes.Clear();
+        if (IsDisabled)
+        {
+            inputAttributes.Add("disabled", "disabled");
+        }
+    }
+
+    protected override bool TryParseValueFromString(string value, out bool result, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+        result = false;
+        try
+        {
+            result = Convert.ToBoolean(value.ToLower());
+        }
+        catch (Exception)
+        {
+            errorMessage = $"{FieldIdentifier.FieldName} field isn't valid.";
+
+            return false;
+        }
+        return true;
+    }
+}
