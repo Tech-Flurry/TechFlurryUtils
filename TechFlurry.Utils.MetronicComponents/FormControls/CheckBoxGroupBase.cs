@@ -31,11 +31,15 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls
         [Parameter]
         public Action<List<T>> OnValueChanged { get; set; }
 
-
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            Value = new();
+        }
         protected void OnChange(T key, ChangeEventArgs args)
         {
             var check = (bool)args.Value;
-            Value = Value.Distinct().ToList();
+            Value = Value?.Distinct()?.ToList();
             if (!check)
             {
                 Value.Remove(key);
