@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 @inject ICommonFunctions _functions
+@implements IAsyncDisposable
 
 <a @ref="e" class="@css" title="@Title" @attributes="InputAttributes" @onclick="OnClick">
     @ChildContent
@@ -83,5 +84,10 @@
             }
         }
         base.OnAfterRender(firstRender);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _functions.HideToolTip(e);
     }
 }
