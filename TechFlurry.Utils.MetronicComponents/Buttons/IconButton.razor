@@ -1,21 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
+@inject ICommonFunctions _functions
 
-@if (string.IsNullOrEmpty(ToolTip) || string.IsNullOrWhiteSpace(ToolTip))
-{
-    <a class="@css" title="@Title" @attributes="InputAttributes" @onclick="OnClick">
-        @ChildContent
-    </a>
-}
-else
-{
-    <a class="@css" @onclick="OnClick" data-toggle="tooltip" title="@ToolTip" data-placement="@ToolTipPosition.ToString().ToLower()" @attributes="InputAttributes">
-        @ChildContent
-    </a>
-}
+<a @ref="e" class="@css" title="@Title" @attributes="InputAttributes" @onclick="OnClick">
+    @ChildContent
+</a>
 
 
 @code {
+    ElementReference e;
+
     [Parameter]
     public string Title { get; set; }
     [Parameter]
@@ -68,10 +62,26 @@ else
         }
         css = cssBuilder.ToString();
         base.OnParametersSet();
+        InputAttributes ??= new Dictionary<string, object>();
+        if (!string.IsNullOrEmpty(ToolTip) && !string.IsNullOrWhiteSpace(ToolTip))
+        {
+            InputAttributes.TryAdd("data-toggle", "tooltip");
+            InputAttributes.TryAdd("data-placement", ToolTipPosition.ToString().ToLower());
+        }
+        if (IsDisabled)
+        {
+            InputAttributes.TryAdd("disabled", "disabled");
+        }
     }
     protected override void OnAfterRender(bool firstRender)
     {
-
+        if (firstRender)
+        {
+            if (!string.IsNullOrEmpty(ToolTip))
+            {
+                _functions.InitToolTip(e);
+            }
+        }
         base.OnAfterRender(firstRender);
     }
 }

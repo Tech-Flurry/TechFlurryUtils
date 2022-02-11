@@ -9,3 +9,6 @@ export function showModal (id) {
 export function hideModal (id) {
     $(id).modal('hide');
 }
+export function initToolTip (e) {
+    $(e).tooltip()
+}

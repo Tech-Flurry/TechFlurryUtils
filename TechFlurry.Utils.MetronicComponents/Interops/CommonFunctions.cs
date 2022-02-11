@@ -12,6 +12,7 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
 
         Task<MarkupString> GetMarkupHtmlAsync(ElementReference element);
         void HideModal(string id);
+        void InitToolTip(ElementReference e);
         void ShowModal(string id);
     }
 
@@ -56,6 +57,11 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         {
             var module = await Module;
             await module.InvokeAsync<string>("hideModal", id);
+        }
+        public async void InitToolTip(ElementReference e)
+        {
+            var module = await Module;
+            await module.InvokeAsync<string>("initToolTip", e);
         }
     }
 }
