@@ -1,0 +1,57 @@
+﻿
+
+<div class="progress" style="height: @(Height)px;">
+    <div class="progress-bar bg-@Color.ToString().ToLower() @(IsStriped?"progress-bar-striped":string.Empty) @(Animate?"progress-bar-animated":string.Empty)" role="progressbar" style="width: @progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+        @if (ShowLabel)
+        {
+            if (ChildContent is null)
+            {
+                @Label
+            }
+            else
+            {
+                @ChildContent(progress)   
+            }
+        }
+    </div>
+</div>
+
+@code {
+    double progress = 0.0;
+
+    [Parameter]
+    public double CurrentValue { get; set; }
+    [Parameter]
+    public double TotalValue { get; set; }
+    [Parameter]
+    public string Label { get; set; }
+    [Parameter]
+    public bool ShowLabel { get; set; }
+    [Parameter]
+    public int? Height { get; set; }
+    [Parameter]
+    public ThemeColors Color { get; set; }
+    [Parameter]
+    public bool IsStriped { get; set; }
+    [Parameter]
+    public bool Animate { get; set; }
+    [Parameter]
+    public RenderFragment<double> ChildContent { get; set; }
+}
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        progress = (CurrentValue / TotalValue) * 100;
+        if (string.IsNullOrEmpty(Label))
+        {
+            Label = $"{Math.Round(progress,2)}%";
+        }
+        Height ??= 15;
+        if (Animate)
+        {
+            IsStriped = true;
+        }
+    }
+}
