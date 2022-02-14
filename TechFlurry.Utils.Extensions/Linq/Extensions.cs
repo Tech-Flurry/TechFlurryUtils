@@ -66,5 +66,16 @@ namespace TechFlurry.Utils.Extensions.Linq
                 action(element);
             }
         }
+
+        public static T Next<T>(this IEnumerable<T> source)
+        {
+            using var enumerator = source.GetEnumerator();
+            
+            while (enumerator.MoveNext())
+            {
+                return enumerator.Current;
+            }
+            return default;
+        }
     }
 }
