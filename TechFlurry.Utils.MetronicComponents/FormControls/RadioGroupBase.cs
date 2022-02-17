@@ -45,6 +45,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls
             name = string.IsNullOrEmpty(Name)
                     ? name = Functions.GenerateElementId()
                     : name = Name;
+            inputAttributes.Clear();
         }
 
         protected override bool TryParseValueFromString(string value, out TValue result, out string errorMessage)

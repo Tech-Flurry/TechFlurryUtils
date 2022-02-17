@@ -34,12 +34,13 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Value = new();
+            Value ??= new();
         }
         protected void OnChange(T key, ChangeEventArgs args)
         {
             var check = (bool)args.Value;
             Value = Value?.Distinct()?.ToList();
+            Value ??= new List<T>();
             if (!check)
             {
                 Value.Remove(key);
@@ -57,7 +58,6 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls
             name = string.IsNullOrEmpty(Name)
                     ? name = Functions.GenerateElementId()
                     : name = Name;
-
             inputAttributes.Clear();
         }
 
