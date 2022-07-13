@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
+@typeparam TModel
+
+@{
+    var visibleColumns = Columns.Where(e => e.IsVisible).ToList();
+}
+
+<CascadingValue Value="this">
+    <div class="card card-custom gutter-b">
+        @if (!string.IsNullOrEmpty(TableTitle))
+        {
+            <div class="card-header">
+                <div class="card-title">
+                    <h3>@TableTitle</h3>
+                </div>
+            </div>
+        }
+        <div class="card-body">
+            @{
+                var borderStyle = string.Empty;
+                if (BorderStyle != TableBorderStyle.None)
+                {
+                    borderStyle = " table-" + borderStyle.ToString().ToLower();
+                }
+                CssClass += borderStyle;
+            }
+            <table class="table @CssClass" id="@Id" @attributes="TableAttributes">
+                @if (!string.IsNullOrEmpty(caption))
+                {
+                    <caption>@caption</caption>
+                }
+
+                @{
+                    var headerStyle = string.Empty;
+                    if (HeaderStyle != TableHeaderStyle.None)
+                    {
+                        headerStyle = " thead-" + HeaderStyle.ToString().ToLower();
+                    }
+                }
+                <thead class="@headerStyle">
+                    <tr>
+                        @if (ShowSerialNumbers)
+                        {
+                            <th scope="col">#</th>
+                        }
+                        @{
+                            var visibleColumns = Columns.Where(x => x.IsVisible);
+                        }
+                        @foreach (var column in visibleColumns)
+                        {
+                            var numeric = string.Empty;
+                            if (Functions.IsNumericOrDate(column.PropertyType))
+                            {
+                                numeric = "text-right";
+                            }
+                            @if (column.HeaderTemplate is not null)
+                            {
+                                <th scope="col">@column.HeaderTemplate(string.IsNullOrEmpty(column.CustomTitle)?column.GetColumnVisualPropertyName():column.CustomTitle)</th>
+                            }
+                            else if (column.CustomTitle is not null)
+                            {
+                                <th scope="col" class="@numeric">@column.CustomTitle</th>
+                            }
+                            else
+                            {
+                                <th scope="col" class="@numeric">@column.GetColumnVisualPropertyName()</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Items.Any())
+                    {
+                        <p>@EmptyGridText</p>
+                    }
+                    else
+                    {
+                        @if (ItemsProvider is not null)
+                        {
+                            <Virtualize @ref="_virtualizer" TItem="TModel" ItemsProvider="ItemsProvider" Context="item" OverscanCount="10">
+
+                                <Row AllowRowSelection="AllowRowSelection" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                                </Row>
+                            </Virtualize>
+                        }
+                        else
+                        {
+                            var srNo = 0;
+                            @foreach (var item in Items)
+                            {
+                                ++srNo;
+                                int? serialNumber = null;
+                                if (ShowSerialNumbers)
+                                {
+                                    serialNumber = srNo;
+                                }
+                                <Row SerialNumber="serialNumber" AllowRowSelection="AllowRowSelection" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                                </Row>
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @ChildContent
+</CascadingValue>
+
+
+@code {
+    Virtualize<TModel> _virtualizer;
+    private string caption;
+    int totalRecords;
+}

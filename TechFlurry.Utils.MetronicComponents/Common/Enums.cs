@@ -42,6 +42,13 @@
         Sm,
         Xs
     }
+    public enum BootstrapSizes
+    {
+        Sm,
+        Md,
+        Lg,
+        Xl
+    }
     public enum LabelSizes
     {
         Sm,
@@ -96,5 +103,32 @@
         Lg,
         Square,
         Rounded
+    }
+    public enum TextAlignment
+    {
+        Left,
+        Center,
+        Right,
+        End,
+        Start
+    }
+    public enum VerticalAlignment
+    {
+        Bottom,
+        Baseline,
+        Middle,
+        Top
+    }
+    public enum TableHeaderStyle
+    {
+        Light,
+        Dark,
+        None
+    }
+    public enum TableBorderStyle
+    {
+        None,
+        Bordered,
+        Borderless
     }
 }

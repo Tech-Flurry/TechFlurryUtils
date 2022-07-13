@@ -204,5 +204,15 @@ namespace TechFlurry.Utils.Extensions.DateTime
             }
             return s;
         }
+        public static bool IsDateType(this object o)
+        {
+            switch (Type.GetTypeCode(o.GetType()))
+            {
+                case TypeCode.DateTime:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

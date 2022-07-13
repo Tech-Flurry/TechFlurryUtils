@@ -1,0 +1,152 @@
+﻿@using TechFlurry.Utils.Extensions.DateTime
+@typeparam TModel
+
+
+<tr id="@Item.GetHashCode()" class="@selectedItemCssClass" @onclick="OnRowClicked" style="@(AllowRowSelection ? " cursor: pointer;" : string.Empty)" @attributes="RowAttributes">
+    @if (SerialNumber is not null)
+    {
+        <th scope="row">@SerialNumber</th>
+    }
+    @{
+        var visibleColumns = Columns.Where(x => x.IsVisible == true);
+    }
+    @foreach (var column in visibleColumns)
+    {
+        if (column.RowTemplate is not null)
+        {
+            if (Functions.IsNumericOrDate(column.PropertyType))
+            {
+                <td class="text-right">@column.RowTemplate(Item)</td>
+            }
+            else
+            {
+                <td>@column.RowTemplate(Item)</td>
+            }
+        }
+        else if (column.ChildContent is not null)
+        {
+            <td>@column.ChildContent</td>
+        }
+        else if (column.Property is not null)
+        {
+            var expression = column.Property.Compile();
+            var result = expression.DynamicInvoke(Item);
+            if (!result.IsNumericType() && !result.IsDateType())
+            {
+                <td>@result</td>
+            }
+            else
+            {
+                <td class="text-right">@result</td>
+            }
+        }
+        else
+        {
+            <td></td>
+        }
+    }
+</tr>
+
+@code {
+    private string selectedItemCssClass;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        SelectedItems ??= new List<TModel>();
+        if (AllowRowSelection)
+        {
+            if (SelectedItems.Any(x => x.Equals(Item)))
+            {
+                DoRowSelectionOperation();
+            }
+            else
+            {
+                selectedItemCssClass = string.Empty;
+            }
+        }
+        else
+        {
+            selectedItemCssClass = string.Empty;
+        }
+    }
+
+    [CascadingParameter]
+    private Table<TModel> Table { get; set; }
+
+    [Parameter]
+    public List<Column<TModel>> Columns { get; set; }
+    [Parameter]
+    public TModel Item { get; set; }
+    [Parameter]
+    public Dictionary<string, object> RowAttributes { get; set; }
+
+    [Parameter]
+    public int? SerialNumber { get; set; }
+
+    [Parameter]
+    public bool AllowRowSelection { get; set; } = false;
+
+    [Parameter]
+    public ThemeColors? SelectedRowColor { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, TModel, Task> RowClickedEvent { get; set; }
+
+    [Parameter]
+    public List<TModel> SelectedItems { get; set; }
+
+    public void ClearSelection()
+    {
+        if (AllowRowSelection)
+        {
+            selectedItemCssClass = string.Empty;
+            SelectedItems.Remove(Item);
+            StateHasChanged();
+        }
+    }
+
+    private async void OnRowClicked(MouseEventArgs args)
+    {
+        if (AllowRowSelection)
+        {
+            if (SelectedItems.Any(x => x.Equals(Item)))
+            {
+                SelectedItems.Remove(Item);
+                selectedItemCssClass = string.Empty;
+            }
+            else
+            {
+                SelectedItems.Add(Item);
+                DoRowSelectionOperation();
+            }
+        }
+        else
+        {
+            selectedItemCssClass = string.Empty;
+        }
+        await RowClickedEvent(args, Item);
+        StateHasChanged();
+    }
+    private void DoRowSelectionOperation()
+    {
+        if (!Table.IsDark)
+        {
+            if (SelectedRowColor is not null)
+            {
+                selectedItemCssClass = " table-" + SelectedRowColor.ToString().ToLower();
+            }
+            else
+            {
+                selectedItemCssClass = " table-active";
+            }
+        }
+        else
+        {
+            if (SelectedRowColor is not null)
+            {
+                selectedItemCssClass = " bg-" + SelectedRowColor.ToString().ToLower();
+            }
+        }
+    }
+}
