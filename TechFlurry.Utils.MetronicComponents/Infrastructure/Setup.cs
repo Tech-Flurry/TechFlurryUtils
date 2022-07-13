@@ -6,11 +6,11 @@ namespace TechFlurry.Utils.MetronicComponents.Infrastructure
 {
     public static class Setup
     {
-        public static void UseMetronicServerComponents(this IServiceCollection services, string baseUrl)
+        public static void UseMetronicComponents(this IServiceCollection services, string baseUrl)
         {
             if (baseUrl.ToLower().StartsWith("config:"))
             {
-                services.AddSingleton<ApplicationInfo>(x =>
+                services.AddSingleton(x =>
                 {
                     var config = x.GetService<IConfiguration>();
                     var baseUrlValue = config.GetValue<string>(baseUrl.ToLower().Replace("config:", string.Empty));
