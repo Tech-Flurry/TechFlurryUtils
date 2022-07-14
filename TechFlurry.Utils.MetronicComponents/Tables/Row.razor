@@ -5,23 +5,50 @@
 <tr id="@Item.GetHashCode()" class="@selectedItemCssClass" @onclick="OnRowClicked" style="@(AllowRowSelection ? " cursor: pointer;" : string.Empty)" @attributes="RowAttributes">
     @if (SerialNumber is not null)
     {
-        <th scope="row">@SerialNumber</th>
+        if (Table is DataTable<TModel>)
+        {
+            <th scope="row">@SerialNumber</th>
+        }
+        else
+        {
+            <th scope="row">@SerialNumber</th>
+        }
     }
     @{
         var visibleColumns = Columns.Where(x => x.IsVisible == true);
     }
     @foreach (var column in visibleColumns)
     {
+        var cssClass = string.Empty;
+        var fontCss = string.Empty;
+        if (column is DataColumn<TModel>)
+        {
+            var dataColumn = (DataColumn<TModel>)column;
+            cssClass += " " + dataColumn.RowCss;
+            if (dataColumn.TextColor is not null)
+            {
+                fontCss += " text-" + dataColumn.TextColor.ToString().ToLower();
+            }
+            if (dataColumn.FontSize is not null)
+            {
+                fontCss += " font-weight-" + dataColumn.FontSize.ToString().ToLower();
+            }
+            if (dataColumn.FontWeight is not null)
+            {
+                fontCss += " font-size-" + dataColumn.FontWeight.ToString().ToLower();
+            }
+        }
+        if (column.TextAlignment == TextAlignment.Right)
+        {
+            cssClass += " text-right";
+        }
+        else if (column.TextAlignment == TextAlignment.Center)
+        {
+            cssClass += " text-center";
+        }
         if (column.RowTemplate is not null)
         {
-            if (Functions.IsNumericOrDate(column.PropertyType))
-            {
-                <td class="text-right">@column.RowTemplate(Item)</td>
-            }
-            else
-            {
-                <td>@column.RowTemplate(Item)</td>
-            }
+            <td class="@cssClass @fontCss">@column.RowTemplate(Item)</td>
         }
         else if (column.ChildContent is not null)
         {
@@ -31,18 +58,18 @@
         {
             var expression = column.Property.Compile();
             var result = expression.DynamicInvoke(Item);
-            if (!result.IsNumericType() && !result.IsDateType())
-            {
-                <td>@result</td>
-            }
-            else
-            {
-                <td class="text-right">@result</td>
-            }
+            <td class="@cssClass">
+                <span class="@fontCss">
+                    @result
+                </span>
+            </td>
         }
         else
         {
-            <td></td>
+            <td>
+                <span class="@fontCss">
+                </span>
+            </td>
         }
     }
 </tr>
@@ -71,11 +98,11 @@
         }
     }
 
-    [CascadingParameter]
-    private Table<TModel> Table { get; set; }
+    [CascadingParameter(Name = "Table")]
+    private TableBase<TModel> Table { get; set; }
 
     [Parameter]
-    public List<Column<TModel>> Columns { get; set; }
+    public List<ColumnBase<TModel>> Columns { get; set; }
     [Parameter]
     public TModel Item { get; set; }
     [Parameter]

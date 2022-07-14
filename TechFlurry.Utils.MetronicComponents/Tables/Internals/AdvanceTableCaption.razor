@@ -1,0 +1,24 @@
+﻿
+
+<span class="text-muted mt-3 font-weight-bold font-size-sm">
+    @($"Showing {FilteredRecords} of {TotalRecords} record{(TotalRecords > 1?"s": string.Empty)}")
+    @if (SelectedItems > 0)
+    {
+        @($" (Selected: {SelectedItems})")
+    }
+</span>
+@code {
+    [Parameter]
+    public int FilteredRecords { get; set; }
+    [Parameter]
+    public int TotalRecords { get; set; }
+    [Parameter]
+    public int SelectedItems { get; set; }
+}
+
+@functions {
+    public void RefreshState()
+    {
+        StateHasChanged();
+    }
+}

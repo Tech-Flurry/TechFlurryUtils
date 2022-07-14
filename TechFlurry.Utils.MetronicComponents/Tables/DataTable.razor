@@ -1,0 +1,346 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using TechFlurry.Utils.MetronicComponents.Tables.Internals
+@typeparam TModel
+@inherits TableBase<TModel>
+
+@{
+    var visibleColumns = Columns.Where(e => e.IsVisible).ToList();
+}
+
+<CascadingValue Value="this" Name="Table">
+    <div class="card card-custom gutter-b">
+        <!--begin::Header-->
+        <div class="card-header border-0 py-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label font-weight-bolder text-dark">@TableTitle</span>
+                <AdvanceTableCaption @ref="_caption" FilteredRecords="filteredRecords" TotalRecords="totalRecords" SelectedItems="SelectedItems.Count" />
+            </h3>
+            <div class="card-toolbar">
+                <div class="input-icon">
+                    <input type="text" class="form-control" placeholder="Search Keyword..." @bind="_keyword" @bind:event="oninput" @onkeyup="UpdateFilter">
+                    <span>
+                        <i class="flaticon2-search-1 icon-md"></i>
+                    </span>
+                </div>
+                <div class="dropdown dropdown-inline">
+                    <button type="button" class="btn text-hover-primary btn-icon btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="ki ki-bold-more-ver"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                        <a class="dropdown-item" @onclick="e=>{ClearSelectedItems();}" style="cursor:pointer;">Clear Selections</a>
+                        @if (IsExportable)
+                        {
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item text-primary">Export:</div>
+                            <a class="dropdown-item" href="#">Print</a>
+                            <a class="dropdown-item" href="#">PDF</a>
+                            <a class="dropdown-item" href="#">CSV</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Header-->
+        <!--begin::Body-->
+        <div class="card-body py-0">
+            <!--begin::Table-->
+            <div class="table-responsive">
+                <table class="table table-head-custom table-vertical-center" id="@Id">
+                    <thead>
+                        <tr class="text-left">
+                            @if (ShowSerialNumbers)
+                            {
+                                if (string.IsNullOrEmpty(SerialNumberText))
+                                {
+                                    <th scope="col">#</th>
+                                }
+                                else
+                                {
+                                    <th scope="col">@SerialNumberText</th>
+                                }
+
+                            }
+                            @foreach (var columnBase in visibleColumns)
+                            {
+                                if (columnBase is not DataColumn<TModel>)
+                                {
+                                    RaiseColumnTypeMissmatchException();
+                                }
+                                var column = (DataColumn<TModel>)columnBase;
+                                var cssClass = string.Empty;
+                                var fontCss = string.Empty;
+                                var style = string.Empty;
+                                if (column.MinWidth > 0)
+                                {
+                                    style += $"width: {column.MinWidth}px";
+                                }
+                                if (column.TextAlignment == TextAlignment.Right)
+                                {
+                                    cssClass = " text-right";
+                                }
+                                else if (column.TextAlignment == TextAlignment.Center)
+                                {
+                                    cssClass = " text-center";
+                                }
+                                if (column.TextColor is not null)
+                                {
+                                    fontCss += " text-" + column.TextColor.ToString().ToLower();
+                                }
+                                if (column.FontSize is not null)
+                                {
+                                    fontCss += " font-weight-" + column.FontSize.ToString().ToLower();
+                                }
+                                if (column.FontWeight is not null)
+                                {
+                                    fontCss += " font-size-" + column.FontWeight.ToString().ToLower();
+                                }
+                                if (column.HeaderTemplate is not null)
+                                {
+                                    <th class="@column.HeaderCss" style="@style">
+                                        @if (column.IsSortable)
+                                        {
+                                            <span style="cursor:pointer;" class="text-hover-primary" @onclick="e=>{ClickOrderColumnOrder((DataColumn<TModel>)column);}">
+                                                @if (_sortOrder.Any(x => x.Column == column.GetColumnPropertyName()))
+                                                {
+                                                    var sortOrder = _sortOrder.FirstOrDefault(x => x.Column == column.GetColumnPropertyName());
+                                                    if (sortOrder?.Direction == SortDirection.Ascending)
+                                                    {
+                                                        <SvgIcon Name="up-2" Color="ThemeColors.Success" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <SvgIcon Name="down-2" Color="ThemeColors.Danger" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <SvgIcon Name="up-down" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                }
+                                            </span>
+                                        }
+                                        @column.HeaderTemplate(string.IsNullOrEmpty(column.CustomTitle)?column.GetColumnVisualPropertyName():column.CustomTitle)
+                                    </th>
+                                }
+                                else if (column.CustomTitle is not null)
+                                {
+                                    <th class="@column.HeaderCss @cssClass" style="@style">
+                                        @if (column.IsSortable)
+                                        {
+                                            <span style="cursor:pointer;" class="text-hover-primary" @onclick="e=>{ClickOrderColumnOrder((DataColumn<TModel>)column);}">
+                                                @if (_sortOrder.Any(x => x.Column == column.GetColumnPropertyName()))
+                                                {
+                                                    var sortOrder = _sortOrder.FirstOrDefault(x => x.Column == column.GetColumnPropertyName());
+                                                    if (sortOrder?.Direction == SortDirection.Ascending)
+                                                    {
+                                                        <SvgIcon Name="up-2" Color="ThemeColors.Success" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <SvgIcon Name="down-2" Color="ThemeColors.Danger" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <SvgIcon Name="up-down" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                }
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(fontCss))
+                                        {
+                                            <span class="@fontCss">
+                                                @column.CustomTitle
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            @column.CustomTitle
+                                        }
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="@column.HeaderCss @cssClass" style="@style">
+                                        @if (column.IsSortable)
+                                        {
+                                            <span style="cursor:pointer;" class="text-hover-primary" @onclick="e=>{ClickOrderColumnOrder((DataColumn<TModel>)column);}">
+                                                @if (_sortOrder.Any(x => x.Column == column.GetColumnPropertyName()))
+                                                {
+                                                    var sortOrder = _sortOrder.FirstOrDefault(x => x.Column == column.GetColumnPropertyName());
+                                                    if (sortOrder?.Direction == SortDirection.Ascending)
+                                                    {
+                                                        <SvgIcon Name="up-2" Color="ThemeColors.Success" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <SvgIcon Name="down-2" Color="ThemeColors.Danger" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <SvgIcon Name="up-down" Size="IconSizes.Sm" CssClass="mr-1" />
+                                                }
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(fontCss))
+                                        {
+                                            <span class="@fontCss">@column.GetColumnVisualPropertyName()</span>
+                                        }
+                                        else
+                                        {
+                                            @column.GetColumnVisualPropertyName()
+                                        }
+                                    </th>
+                                }
+
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Items.Any())
+                        {
+                            <p>@EmptyGridText</p>
+                        }
+                        else
+                        {
+                            if (ItemsProvider is not null)
+                            {
+                                <Virtualize @ref="_virtualizer" TItem="TModel" ItemsProvider="ItemsProvider" Context="item" OverscanCount="10">
+
+                                    <Row AllowRowSelection="AllowRowSelection" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                                    </Row>
+                                </Virtualize>
+                            }
+                            else
+                            {
+                                var srNo = 0;
+                                var filteredItems = Items.AsEnumerable();
+                                if (_filter.IsSearchAll || _filter.SearchableColumns.Any())
+                                {
+                                    filteredItems = filteredItems.Where(x =>
+                                    {
+                                        var result = false;
+                                        foreach (var filterColumn in _filter.SearchableColumns)
+                                        {
+                                            if (!Functions.IsDate(x.GetType().GetProperty(filterColumn).PropertyType))
+                                            {
+                                                var str = x.GetType().GetProperty(filterColumn).GetValue(x, null).ToString();
+                                                if (_filter.IsIgnoreCase)
+                                                {
+                                                    str = str.ToLower();
+                                                    if (_filter.IsMatchExact)
+                                                    {
+                                                        result = (result || str == _filter.Keyword.ToLower());
+                                                    }
+                                                    else
+                                                    {
+                                                        result = (result || str.Contains(_filter.Keyword.ToLower()));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (_filter.IsMatchExact)
+                                                    {
+                                                        result = (result || str == _filter.Keyword.ToLower());
+                                                    }
+                                                    else
+                                                    {
+                                                        result = (result || str.Contains(_filter.Keyword.ToLower()));
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var date = (DateTime)x.GetType().GetProperty(filterColumn).GetValue(x);
+                                                if (FilterDateFormats?.Any() ?? false)
+                                                {
+                                                    foreach (var dateFormat in FilterDateFormats)
+                                                    {
+                                                        var dateString = date.ToString(dateFormat);
+                                                        dateString = _filter.IsIgnoreCase ? dateString.ToLower() : dateString;
+                                                        var keyword = _filter.IsIgnoreCase ? _filter.Keyword.ToLower() : _filter.Keyword;
+                                                        if (_filter.IsMatchExact)
+                                                        {
+                                                            result = (result || dateString == keyword);
+                                                        }
+                                                        else
+                                                        {
+                                                            result = (result || dateString.Contains(keyword));
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var dateString = date.ToString();
+                                                    dateString = _filter.IsIgnoreCase ? dateString.ToLower() : dateString;
+                                                    var keyword = _filter.IsIgnoreCase ? _filter.Keyword.ToLower() : _filter.Keyword;
+                                                    if (_filter.IsMatchExact)
+                                                    {
+                                                        result = (result || dateString == keyword);
+                                                    }
+                                                    else
+                                                    {
+                                                        result = (result || dateString.Contains(keyword));
+                                                    }
+                                                }
+                                            }
+                                            if (result is true)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                        return result;
+                                    });
+                                }
+                                var sortOrder = _sortOrder.FirstOrDefault();
+                                IOrderedEnumerable<TModel> orderedItems = null;
+                                if (sortOrder is not null)
+                                {
+                                    if (sortOrder.Direction == SortDirection.Ascending)
+                                    {
+                                        orderedItems = filteredItems.OrderBy(x => x.GetType().GetProperty(sortOrder.Column).GetValue(x));
+                                    }
+                                    else
+                                    {
+                                        orderedItems = filteredItems.OrderByDescending(x => x.GetType().GetProperty(sortOrder.Column).GetValue(x));
+                                    }
+                                }
+                                foreach (var order in _sortOrder.Skip(1))
+                                {
+                                    if (order.Direction == SortDirection.Ascending)
+                                    {
+                                        orderedItems = orderedItems.ThenBy(x => x.GetType().GetProperty(order.Column).GetValue(x));
+                                    }
+                                    else
+                                    {
+                                        orderedItems = orderedItems.ThenByDescending(x => x.GetType().GetProperty(order.Column).GetValue(x));
+                                    }
+                                }
+                                filteredItems = orderedItems is null ? filteredItems : orderedItems;
+                                foreach (var item in filteredItems)
+                                {
+                                    ++srNo;
+                                    int? serialNumber = null;
+                                    if (ShowSerialNumbers)
+                                    {
+                                        serialNumber = srNo;
+                                    }
+                                    <Row SerialNumber="serialNumber" AllowRowSelection="AllowRowSelection" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                                    </Row>
+                                }
+                                UpdateCaption(SelectedItems.Count, Items.Count, filteredItems.Count());
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!--end::Table-->
+        </div>
+        <!--end::Body-->
+    </div>
+
+    @ChildContent
+</CascadingValue>
+
+@code {
+    private AdvanceTableCaption _caption;
+}

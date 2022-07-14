@@ -1,127 +1,35 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechFlurry.Utils.MetronicComponents.Common;
 
 namespace TechFlurry.Utils.MetronicComponents.Tables
 {
-    public partial class Table<TModel> : ComponentBase
+    public partial class Table<TModel> : TableBase<TModel>
     {
         [Parameter]
-        public List<TModel> Items { get; set; } = new List<TModel>();
-
-        [Parameter]
-        public string Id { get; set; } = "";
-
-        [Parameter]
-        public string TableTitle { get; set; }
-
-        [Parameter]
-        public string ContainerCssClass { get; set; } = "table-responsive";
-
-        [Parameter]
-        public string CssClass { get; set; }
-
-        [Parameter]
         public bool IsHover { get; set; }
-
-        [Parameter]
-        public bool IsDark { get; set; }
 
         [Parameter]
         public bool IsRounded { get; set; }
 
         [Parameter]
         public bool IsStriped { get; set; }
-
         [Parameter]
         public bool IsSmall { get; set; }
-
-        [Parameter]
-        public bool ShowSerialNumbers { get; set; }
-
         [Parameter]
         public TableHeaderStyle HeaderStyle { get; set; } = TableHeaderStyle.None;
 
         [Parameter]
         public TableBorderStyle BorderStyle { get; set; } = TableBorderStyle.None;
-
-        [Parameter]
-        public Dictionary<string, object> TableAttributes { get; set; }
-
-        [Parameter]
-        public Dictionary<string, object> RowAttributes { get; set; }
-
-        [Parameter]
-        public bool AllowRowSelection { get; set; } = false;
-
-        [Parameter]
-        public ThemeColors? SelectedRowColor { get; set; }
-
         [Parameter]
         public BootstrapSizes? ResponsiveSizes { get; set; }
-
-        [Parameter]
-        public EventCallback<TModel> RowClickedEvent { get; set; }
-
-        [Parameter]
-        public TModel LastSelectedItem { get; set; }
-
-        [Parameter]
-        public List<TModel> SelectedItems { get; set; }
-
-        [Parameter]
-        public string EmptyGridText { get; set; } = "No records to show";
-
-        [Parameter]
-        public int OverscanCount { get; set; } = 10;
-
-        [Parameter]
-        public RenderFragment ChildContent { get; set; }
-        [Parameter]
-        public ItemsProviderDelegate<TModel> ItemsProvider { get; set; }
-
-        private Guid modalId;
-
-        private List<TModel> AllItems { get; set; } = new List<TModel>();
-        private List<Column<TModel>> Columns { get; set; } = new List<Column<TModel>>();
-
-        public void ClearSelectedItems()
-        {
-            SelectedItems.Clear();
-            StateHasChanged();
-        }
-
-        public void AddColumn(Column<TModel> column)
-        {
-            Columns.Add(column);
-            StateHasChanged();
-        }
-
-        protected override void OnInitialized()
-        {
-            modalId = Guid.NewGuid();
-            if (Items == null) Items = new List<TModel>();
-            AllItems = Items;
-        }
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            Id = string.IsNullOrEmpty(Id) ? "table-" + Guid.NewGuid().ToString() : Id;
-            CssClass += " table table-responsive";
+            CssClass += " table-responsive";
             if (ResponsiveSizes is not null)
             {
                 CssClass += "-" + ResponsiveSizes.ToString().ToLower();
-            }
-            if (IsDark)
-            {
-                CssClass += " table-dark";
             }
             if (IsHover)
             {
@@ -139,56 +47,11 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
             {
                 CssClass += " table-sm";
             }
-            if (ItemsProvider is null)
-            {
-                AllItems = Items;
-                UpdateTotalRecords();
-            }
         }
-        protected async override Task OnParametersSetAsync()
+        protected override void UpdateTotalRecords()
         {
-            await base.OnParametersSetAsync();
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-            {
-                foreach (var column in Columns)
-                {
-                    column.StateChanged += ColumnStateChanged;
-                }
-                StateHasChanged();
-            }
-        }
-
-        public void Dispose()
-        {
-            foreach (var column in Columns)
-            {
-                column.StateChanged -= ColumnStateChanged;
-            }
-            Columns.Clear();
-        }
-        private async Task OnRowClickedEvent(MouseEventArgs args, TModel item)
-        {
-            LastSelectedItem = item;
-            await RowClickedEvent.InvokeAsync(item);
-            StateHasChanged();
-        }
-
-        private void UpdateTotalRecords()
-        {
-            totalRecords = Items.Count;
+            base.UpdateTotalRecords();
             caption = $"Showing {totalRecords} record{(totalRecords > 1 ? "s" : string.Empty)}";
-            //StateHasChanged();
         }
-
-        /// <summary>
-        /// Event handler for when certain important properties of the column change
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        private void ColumnStateChanged(Object sender, EventArgs args) => StateHasChanged();
     }
 }

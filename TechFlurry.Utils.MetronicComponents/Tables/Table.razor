@@ -1,20 +1,21 @@
 ﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
 @typeparam TModel
+@inherits TableBase<TModel>
 
 @{
     var visibleColumns = Columns.Where(e => e.IsVisible).ToList();
 }
 
-<CascadingValue Value="this">
+<CascadingValue Value="this" Name="Table" TValue="TableBase<TModel>">
     <div class="card card-custom gutter-b">
-        @if (!string.IsNullOrEmpty(TableTitle))
-        {
-            <div class="card-header">
+        <div class="card-header">
+            @if (!string.IsNullOrEmpty(TableTitle))
+            {
                 <div class="card-title">
                     <h3>@TableTitle</h3>
                 </div>
-            </div>
-        }
+            }
+        </div>
         <div class="card-body">
             @{
                 var borderStyle = string.Empty;
@@ -27,7 +28,13 @@
             <table class="table @CssClass" id="@Id" @attributes="TableAttributes">
                 @if (!string.IsNullOrEmpty(caption))
                 {
-                    <caption>@caption</caption>
+                    <caption>
+                        @caption
+                        @if (SelectedItems.Any())
+                        {
+                            @(new MarkupString($" (Selected: {SelectedItems.Count})"))
+                        }
+                    </caption>
                 }
 
                 @{
@@ -43,15 +50,16 @@
                         {
                             <th scope="col">#</th>
                         }
-                        @{
-                            var visibleColumns = Columns.Where(x => x.IsVisible);
-                        }
                         @foreach (var column in visibleColumns)
                         {
                             var numeric = string.Empty;
-                            if (Functions.IsNumericOrDate(column.PropertyType))
+                            if (column.TextAlignment == TextAlignment.Right)
                             {
                                 numeric = "text-right";
+                            }
+                            else if (column.TextAlignment == TextAlignment.Center)
+                            {
+                                numeric = "text-center";
                             }
                             @if (column.HeaderTemplate is not null)
                             {
@@ -110,7 +118,4 @@
 
 
 @code {
-    Virtualize<TModel> _virtualizer;
-    private string caption;
-    int totalRecords;
 }
