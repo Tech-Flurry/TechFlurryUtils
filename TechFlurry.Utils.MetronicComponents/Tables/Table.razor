@@ -77,7 +77,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Items.Any()  && ItemsProvider is null)
+                    @if (!Items.Any() && ItemsProvider is null)
                     {
                         <p>@EmptyGridText</p>
                     }
@@ -85,11 +85,26 @@
                     {
                         @if (ItemsProvider is not null)
                         {
-                            <Virtualize @ref="_virtualizer" ItemsProvider="LoadData" Context="item" OverscanCount="10">
-
-                                <Row AllowRowSelection="AllowRowSelection" SerialNumber="item.SerialNumber" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item.DataRow" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
-                                </Row>
-                            </Virtualize>
+                            <Virtualize @ref="_virtualizer" ItemsProvider="LoadData" Context="item" OverscanCount="OverscanCount">
+                                <Placeholder>
+                                    @foreach (var column in visibleColumns)
+                                    {
+                                <tr>
+                                    <td>
+                                        <div class="main-item">
+                                            <div class="animated-background">
+                                                <div class="background-masker"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                    }
+                        </Placeholder>
+                        <ChildContent>
+                            <Row AllowRowSelection="AllowRowSelection" SerialNumber="item.SerialNumber" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item.DataRow" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                            </Row>
+                        </ChildContent>
+                    </Virtualize>
                         }
                         else
                         {

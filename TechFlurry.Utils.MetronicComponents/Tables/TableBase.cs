@@ -58,7 +58,7 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
         public string EmptyGridText { get; set; } = "No records to show";
 
         [Parameter]
-        public int OverscanCount { get; set; } = 10;
+        public int OverscanCount { get; set; } = 5;
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
