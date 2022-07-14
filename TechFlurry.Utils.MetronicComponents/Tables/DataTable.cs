@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,6 +123,10 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
                 _filter.SearchableColumns.Clear();
                 _filter.IsIgnoreCase = false;
                 _filter.IsSearchAll = false;
+                if (ItemsProvider is not null)
+                {
+                    await _virtualizer.RefreshDataAsync();
+                }
             }
         }
 
@@ -170,6 +175,8 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
 
         protected virtual void UpdateCaption(int selectedItemsCount, int totalItems, int filteredItems)
         {
+            totalRecords = totalItems;
+            filteredRecords = filteredItems;
             if (_caption is not null)
             {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component. Needed to be updated runtime
@@ -178,6 +185,22 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
                 _caption?.RefreshState();
             }
+        }
+        protected override async ValueTask<ItemsProviderResult<DataRowHolder<TModel>>> LoadData(ItemsProviderRequest request)
+        {
+            var startRow = request.StartIndex;
+            var numberOfRows = request.Count;
+            var data = await ItemsProvider(new DataRequest
+            {
+                Count = numberOfRows,
+                StartRow = startRow,
+                Filter = _filter,
+                SortOrder = _sortOrder
+            });
+            totalRecords = data.TotalRowsCount;
+            filteredRecords = data.FilteredRowsCount;
+            UpdateCaption(SelectedItems.Count, data.TotalRowsCount, data.FilteredRowsCount);
+            return new ItemsProviderResult<DataRowHolder<TModel>>(data.Data, data.TotalRowsCount);
         }
     }
 }

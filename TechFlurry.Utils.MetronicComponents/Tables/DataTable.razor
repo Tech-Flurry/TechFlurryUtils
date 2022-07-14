@@ -196,7 +196,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!Items.Any())
+                        @if (!Items.Any() && ItemsProvider is null)
                         {
                             <p>@EmptyGridText</p>
                         }
@@ -204,9 +204,9 @@
                         {
                             if (ItemsProvider is not null)
                             {
-                                <Virtualize @ref="_virtualizer" TItem="TModel" ItemsProvider="ItemsProvider" Context="item" OverscanCount="10">
+                                <Virtualize @ref="_virtualizer" ItemsProvider="LoadData" Context="item" OverscanCount="10">
 
-                                    <Row AllowRowSelection="AllowRowSelection" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
+                                    <Row AllowRowSelection="AllowRowSelection" SerialNumber="item.SerialNumber" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item.DataRow" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">
                                     </Row>
                                 </Virtualize>
                             }

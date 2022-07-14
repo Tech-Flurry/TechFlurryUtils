@@ -10,7 +10,7 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
 {
     public abstract class TableBase<TModel> : ComponentBase
     {
-        protected Virtualize<TModel> _virtualizer;
+        protected Virtualize<DataRowHolder<TModel>> _virtualizer;
         protected string caption;
         protected int totalRecords;
 
@@ -63,7 +63,7 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
         [Parameter]
         public RenderFragment ChildContent { get; set; }
         [Parameter]
-        public ItemsProviderDelegate<TModel> ItemsProvider { get; set; }
+        public Func<DataRequest, Task<DataHolder<TModel>>> ItemsProvider { get; set; }
         protected List<TModel> AllItems { get; set; } = new List<TModel>();
         protected List<ColumnBase<TModel>> Columns { get; set; } = new List<ColumnBase<TModel>>();
         public virtual void ClearSelectedItems()
@@ -137,6 +137,18 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
             {
                 totalRecords = Items.Count;
             }
+        }
+
+        protected virtual async ValueTask<ItemsProviderResult<DataRowHolder<TModel>>> LoadData(ItemsProviderRequest request)
+        {
+            var startRow = request.StartIndex;
+            var numberOfRows = request.Count;
+            var data = await ItemsProvider(new DataRequest
+            {
+                Count = numberOfRows,
+                StartRow = startRow,
+            });
+            return new ItemsProviderResult<DataRowHolder<TModel>>(data.Data, data.TotalRowsCount);
         }
 
         /// <summary>
