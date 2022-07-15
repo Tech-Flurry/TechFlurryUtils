@@ -165,6 +165,7 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
             {
                 Count = numberOfRows,
                 StartRow = startRow,
+                CancellationToken = request.CancellationToken
             });
             return new ItemsProviderResult<DataRowHolder<TModel>>(data.Data, data.TotalRowsCount);
         }

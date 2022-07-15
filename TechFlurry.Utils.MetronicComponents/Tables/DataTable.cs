@@ -196,7 +196,8 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
                 Count = numberOfRows,
                 StartRow = startRow,
                 Filter = _filter,
-                SortOrder = _sortOrder
+                SortOrder = _sortOrder,
+                CancellationToken = request.CancellationToken
             });
             totalRecords = data.TotalRowsCount;
             filteredRecords = data.FilteredRowsCount;
