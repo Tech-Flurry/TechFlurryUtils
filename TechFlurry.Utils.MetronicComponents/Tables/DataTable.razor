@@ -215,9 +215,9 @@
                             {
                                 <Virtualize @ref="_virtualizer" ItemsProvider="LoadData" Context="item" OverscanCount="@OverscanCount">
                                     <Placeholder>
-                                        @foreach (var column in visibleColumns)
-                                        {
-                                    <tr>
+                                        <tr>
+                                            @if (ShowSerialNumbers)
+                                            {
                                         <td>
                                             <div class="main-item">
                                                 <div class="animated-background">
@@ -225,8 +225,18 @@
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>
-                                        }
+                                            }
+                                    @foreach (var column in visibleColumns)
+                                            {
+                                        <td>
+                                            <div class="main-item">
+                                                <div class="animated-background">
+                                                    <div class="background-masker"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            }
+                                </tr>
                             </Placeholder>
                             <ChildContent>
                                 <Row AllowRowSelection="AllowRowSelection" SerialNumber="item.SerialNumber" SelectedRowColor="SelectedRowColor" Columns="Columns" Item="item.DataRow" RowAttributes="RowAttributes" RowClickedEvent="OnRowClickedEvent" SelectedItems="SelectedItems">

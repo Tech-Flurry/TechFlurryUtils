@@ -201,7 +201,7 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
             totalRecords = data.TotalRowsCount;
             filteredRecords = data.FilteredRowsCount;
             UpdateCaption(SelectedItems.Count, data.TotalRowsCount, data.FilteredRowsCount);
-            return new ItemsProviderResult<DataRowHolder<TModel>>(data.Data, data.TotalRowsCount);
+            return new ItemsProviderResult<DataRowHolder<TModel>>(data.Data, data.FilteredRowsCount);
         }
     }
 }
