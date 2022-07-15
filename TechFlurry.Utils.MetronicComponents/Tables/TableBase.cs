@@ -78,6 +78,24 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
             StateHasChanged();
         }
 
+        public async Task Refresh()
+        {
+            StateHasChanged();
+            if (ItemsProvider is not null)
+            {
+                await _virtualizer.RefreshDataAsync();
+            }
+        }
+
+        public async void SelectItem(TModel item, bool triggerEvent = false)
+        {
+            SelectedItems.Add(item);
+            if (triggerEvent)
+            {
+                await OnRowClickedEvent(null, item);
+            }
+        }
+
         protected override void OnInitialized()
         {
             if (Items == null) Items = new List<TModel>();

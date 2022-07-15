@@ -27,14 +27,23 @@
                         <i class="ki ki-bold-more-ver"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                        <a class="dropdown-item" @onclick="e=>{ClearSelectedItems();}" style="cursor:pointer;">Clear Selections</a>
+                        <ContextMenuItem Text="Clear Selections" OnClick="ClearSelectedItems">
+                            <Icon>
+                                <SvgIcon Name="brush" Size="IconSizes.Sm" class="@context" />
+                            </Icon>
+                        </ContextMenuItem>
                         @if (IsExportable)
                         {
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-item text-primary">Export:</div>
+                            <ContextMenuDivider />
+                            <ContextMenuTitle Text="Export:" />
                             <a class="dropdown-item" href="#">Print</a>
                             <a class="dropdown-item" href="#">PDF</a>
                             <a class="dropdown-item" href="#">CSV</a>
+                        }
+                        @if (CustomContextMenu is not null)
+                        {
+                            <ContextMenuDivider></ContextMenuDivider>
+                            @CustomContextMenu
                         }
                     </div>
                 </div>

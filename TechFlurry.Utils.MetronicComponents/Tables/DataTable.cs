@@ -29,7 +29,8 @@ namespace TechFlurry.Utils.MetronicComponents.Tables
         public List<string> FilterDateFormats { get; set; }
         [Parameter]
         public bool IsExportable { get; set; }
-
+        [Parameter]
+        public RenderFragment CustomContextMenu { get; set; }
 
         protected override void OnInitialized()
         {
