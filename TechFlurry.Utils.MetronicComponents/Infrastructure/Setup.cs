@@ -23,6 +23,9 @@ namespace TechFlurry.Utils.MetronicComponents.Infrastructure
             }
             services.AddScoped<ICommonFunctions, CommonFunctions>();
             services.AddScoped<IGlobalSearchInterop, GlobalSearchInterop>();
+
+            //
+            services.AddTransient<IDateTimeRangeInterop, DateTimeRangeInterop>();
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@inherits InputBase<DateRange>
+@inject IDateTimeRangeInterop DateTimeInterop
+
+
+
+<input type='text' class="form-control" readonly placeholder="Select time" @attributes="inputAttributes" />
+
