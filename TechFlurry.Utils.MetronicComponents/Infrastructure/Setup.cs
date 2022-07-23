@@ -26,6 +26,7 @@ namespace TechFlurry.Utils.MetronicComponents.Infrastructure
 
             //
             services.AddTransient<IDateTimeRangeInterop, DateTimeRangeInterop>();
+            services.AddTransient<IMaskedInputInterop, MaskedInputInterop>();
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@inherits InputBase<string>
+
+<input class="form-control @CssClass" id="@id" name="@name" @bind-value="Value"  type="text" @attributes="inputAttributes" />
+@if (ShowHelpText)
+{
+    <span class="form-text text-muted">@HelpText <code>@Mask</code></span>
+}
+
+
