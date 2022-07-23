@@ -173,5 +173,141 @@ namespace TechFlurry.Utils.MetronicComponents.Common
                     return false;
             }
         }
+        public static string ToCSharpDateFormat(this DateFormats dateFormat)
+        {
+            var format = string.Empty;
+            switch (dateFormat)
+            {
+                case DateFormats.MMddyyyy:
+                    format = "MM/dd/yyyy";
+                    break;
+                case DateFormats.MMddyyyyHHmmss:
+                    format = "MM/dd/yyyy HH:mm:ss";
+                    break;
+                case DateFormats.MMddyyyyHHmm:
+                    format = "MM/dd/yyyy HH:mm";
+                    break;
+                case DateFormats.MMddyyyyHmm:
+                    format = "MM/dd/yyyy H:mm";
+                    break;
+                case DateFormats.MMddyyyyhhmmtt:
+                    format = "MM/dd/yyyy hh:mm tt";
+                    break;
+                case DateFormats.MMddyyyyhmmtt:
+                    format = "MM/dd/yyyy h:mm tt";
+                    break;
+                case DateFormats.MMddyyHHmm:
+                    format = "MM/dd/yy h:mm tt";
+                    break;
+                case DateFormats.ddMMyyyy:
+                    format = "dd/MM/yyyy";
+                    break;
+                case DateFormats.ddMMyyyyHHmmss:
+                    format = "dd/MM/yyyy HH:mm:ss";
+                    break;
+                case DateFormats.ddMMMMyyHHmm:
+                    format = "dd MMMM, yy HH:mm";
+                    break;
+                case DateFormats.ddMMMMyyHmm:
+                    format = "dd MMMM, yy H:mm";
+                    break;
+                case DateFormats.ddMMMMyyHHmmss:
+                    format = "dd MMMM, yy HH:mm:ss";
+                    break;
+                case DateFormats.ddMMyyhhmmtt:
+                    format = "dd/MM/yy hh:mm tt";
+                    break;
+                case DateFormats.ddMMyyhmmtt:
+                    format = "dd/MM/yy h:mm tt";
+                    break;
+                case DateFormats.MMMyyyy:
+                    format = "MMM, yyyy";
+                    break;
+                case DateFormats.MMMMyyyy:
+                    format = "MMMM, yyyy";
+                    break;
+                case DateFormats.MMMMyy:
+                    format = "MMMM, yy";
+                    break;
+                case DateFormats.yyyy:
+                    format = "yyyy";
+                    break;
+                case DateFormats.yyyyMMdd:
+                    format = "yyyy-MM-dd";
+                    break;
+                case DateFormats.yyyyMMddHHmmss:
+                    format = "yyyy-MM-dd HH:mm:ss";
+                    break;
+            }
+            return format;
+        }
+        public static string ToJSDateFormat(this DateFormats dateFormat)
+        {
+            var format = string.Empty;
+            switch (dateFormat)
+            {
+                case DateFormats.MMddyyyy:
+                    format = "MM/DD/YYYY";
+                    break;
+                case DateFormats.MMddyyyyHHmmss:
+                    format = "MM/DD/YYYY HH:mm:ss";
+                    break;
+                case DateFormats.MMddyyyyHHmm:
+                    format = "MM/DD/YYYY HH:mm";
+                    break;
+                case DateFormats.MMddyyyyHmm:
+                    format = "MM/DD/YYYY H:mm";
+                    break;
+                case DateFormats.MMddyyyyhhmmtt:
+                    format = "MM/DD/YYYY hh:mm tt";
+                    break;
+                case DateFormats.MMddyyyyhmmtt:
+                    format = "MM/DD/YYYY h:mm tt";
+                    break;
+                case DateFormats.MMddyyHHmm:
+                    format = "MM/DD/YYYY h:mm tt";
+                    break;
+                case DateFormats.ddMMyyyy:
+                    format = "DD/MM/YYYY";
+                    break;
+                case DateFormats.ddMMyyyyHHmmss:
+                    format = "DD/MM/YYYY HH:mm:ss";
+                    break;
+                case DateFormats.ddMMMMyyHHmm:
+                    format = "DD MMMM, YY HH:mm";
+                    break;
+                case DateFormats.ddMMMMyyHmm:
+                    format = "DD MMMM, YY H:mm";
+                    break;
+                case DateFormats.ddMMMMyyHHmmss:
+                    format = "DD MMMM, YY HH:mm:ss";
+                    break;
+                case DateFormats.ddMMyyhhmmtt:
+                    format = "DD/MM/YY hh:mm tt";
+                    break;
+                case DateFormats.ddMMyyhmmtt:
+                    format = "DD/MM/YY h:mm tt";
+                    break;
+                case DateFormats.MMMyyyy:
+                    format = "MMM, YYYY";
+                    break;
+                case DateFormats.MMMMyyyy:
+                    format = "MMMM, YYYY";
+                    break;
+                case DateFormats.MMMMyy:
+                    format = "MMMM, YY";
+                    break;
+                case DateFormats.yyyy:
+                    format = "YYYY";
+                    break;
+                case DateFormats.yyyyMMdd:
+                    format = "YYYY-MM-DD";
+                    break;
+                case DateFormats.yyyyMMddHHmmss:
+                    format = "YYYY-MM-DD HH:mm:ss";
+                    break;
+            }
+            return format;
+        }
     }
 }

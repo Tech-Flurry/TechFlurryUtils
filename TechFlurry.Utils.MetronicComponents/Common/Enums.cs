@@ -131,4 +131,28 @@
         Bordered,
         Borderless
     }
+
+    public enum DateFormats
+    {
+        MMddyyyy,
+        MMddyyyyHHmmss,
+        MMddyyyyHHmm,
+        MMddyyyyHmm,
+        MMddyyyyhhmmtt,
+        MMddyyyyhmmtt,
+        MMddyyHHmm,
+        ddMMyyyy,
+        ddMMyyyyHHmmss,
+        ddMMMMyyHHmm,
+        ddMMMMyyHmm,
+        ddMMMMyyHHmmss,
+        ddMMyyhhmmtt,
+        ddMMyyhmmtt,
+        MMMyyyy,
+        MMMMyyyy,
+        MMMMyy,
+        yyyy,
+        yyyyMMdd,
+        yyyyMMddHHmmss
+    }
 }

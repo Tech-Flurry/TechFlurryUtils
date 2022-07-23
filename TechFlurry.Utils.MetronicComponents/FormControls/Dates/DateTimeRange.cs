@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TechFlurry.Utils.MetronicComponents.Common;
 using TechFlurry.Utils.MetronicComponents.Models;
 
@@ -27,7 +28,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
         [Parameter]
         public ThemeColors CancelButtonColor { get; set; }
         [Parameter]
-        public string DateFormat { get; set; }
+        public DateFormats? DateFormat { get; set; }
         [Parameter]
         public bool IsTimeIncluded { get; set; }
         [Parameter]
@@ -56,8 +57,20 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
         private void OnDateRangeChanged(object sender, DateRange e)
         {
             Value = e;
+            CurrentValueAsString = DateFormat is not null ? e.ToString(DateFormat.Value.ToCSharpDateFormat()) : e.ToString();
             StateHasChanged();
             OnValueChanged?.Invoke(Value);
+        }
+        protected override string FormatValueAsString(DateRange value)
+        {
+            if (DateFormat is not null)
+            {
+                return value.ToString(DateFormat.Value.ToCSharpDateFormat());
+            }
+            else
+            {
+                return value.ToString();
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -65,7 +78,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
             base.OnAfterRender(firstRender);
             if (firstRender)
             {
-                DateTimeInterop.Init(Value.Start, Value.End, id, applyButtonCss, cancelButtonCss, DateFormat, IsTimeIncluded, IsSingleDatePicker, ShowDropDown, TimeTicksIncrement);
+                DateTimeInterop.Init(Value.Start, Value.End, id, applyButtonCss, cancelButtonCss, DateFormat.HasValue ? DateFormat.Value.ToJSDateFormat() : null, IsTimeIncluded, IsSingleDatePicker, ShowDropDown, TimeTicksIncrement);
             }
         }
 
@@ -104,7 +117,26 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
 
         protected override bool TryParseValueFromString(string value, out DateRange result, out string errorMessage)
         {
-            throw new NotImplementedException();
+            bool isParsed = false;
+            errorMessage = string.Empty;
+            var dates = value.Split(" to ");
+            if (dates.Length == 2)
+            {
+                var startDate = DateTime.ParseExact(dates[0], DateFormat is null ? "yyyy-MM-dd" : DateFormat.Value.ToCSharpDateFormat(), CultureInfo.InvariantCulture);
+                var endDate = DateTime.ParseExact(dates[1], DateFormat is null ? "yyyy-MM-dd" : DateFormat.Value.ToCSharpDateFormat(), CultureInfo.InvariantCulture);
+                result = new DateRange
+                {
+                    Start = startDate,
+                    End = endDate
+                };
+                isParsed = true;
+            }
+            else
+            {
+                result = null;
+                errorMessage = $"{FieldIdentifier.FieldName} field isn't valid.";
+            }
+            return isParsed;
         }
     }
 }
