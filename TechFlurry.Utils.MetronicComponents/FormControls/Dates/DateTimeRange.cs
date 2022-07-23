@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechFlurry.Utils.MetronicComponents.Common;
 using TechFlurry.Utils.MetronicComponents.Models;
 
@@ -60,8 +56,8 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
         private void OnDateRangeChanged(object sender, DateRange e)
         {
             Value = e;
-            OnValueChanged?.Invoke(Value);
             StateHasChanged();
+            OnValueChanged?.Invoke(Value);
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -76,6 +72,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
         public void AddPredefinedRange(string name, DateTime startDate, DateTime endDate)
         {
             DateTimeInterop.AddPredefinedRange(name, startDate, endDate);
+            StateHasChanged();
         }
 
         protected override void OnParametersSet()
