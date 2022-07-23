@@ -1,0 +1,112 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics.CodeAnalysis
+@inherits InputBase<decimal>
+@inject IMaskedInputInterop MaskedInputInterop
+
+<input class="form-control @CssClass" id="@id" name="@name" value="@Value" type="text" @attributes="inputAttributes" />
+@if (!string.IsNullOrEmpty(HelpText))
+{
+    <span class="form-text text-muted">@HelpText</span>
+}
+
+@code {
+    private string id, name;
+    private readonly Dictionary<string, object> inputAttributes = new();
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public string HelpText { get; set; }
+    [Parameter]
+    public bool IsDisabled { get; set; }
+    [Parameter]
+    public string Placeholder { get; set; }
+    [Parameter]
+    public int UptoDecimals { get; set; } = 2;
+    [Parameter]
+    public Action<decimal> OnValueChanged { get; set; }
+}
+
+@functions {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        MaskedInputInterop.OnValueChanged += OnValueChangedFromInterop;
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            MaskedInputInterop.InitDecimalMask("#" + id);
+        }
+    }
+    protected async void OnValueChangedFromInterop(object sender, string e)
+    {
+        Value = Convert.ToDecimal(e);
+        CurrentValue = Convert.ToDecimal(e);
+        CurrentValueAsString = ManipulateDecimalString(Value);
+        OnValueChanged?.Invoke(Value);
+        if (ValueChanged.HasDelegate)
+        {
+            await ValueChanged.InvokeAsync(Value);
+        }
+        StateHasChanged();
+    }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        id ??= "di_" + Functions.GenerateElementId();
+        name = string.IsNullOrEmpty(Name)
+                ? name = Functions.GenerateElementId()
+                : name = Name;
+        inputAttributes.Clear();
+        inputAttributes.Add("name", name);
+        inputAttributes.Add("id", id);
+        if (IsDisabled)
+        {
+            inputAttributes.Add("disabled", "disabled");
+        }
+        if (AdditionalAttributes is not null)
+        {
+            foreach (var attr in AdditionalAttributes)
+            {
+                inputAttributes.Add(attr.Key, attr.Value);
+            }
+        }
+    }
+    protected override string FormatValueAsString(decimal value)
+    {
+        return ManipulateDecimalString(value);
+    }
+    protected override bool TryParseValueFromString(string value, [MaybeNullWhen(false)] out decimal result, [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        var isParsed = false;
+        result = 0.0m;
+        validationErrorMessage = string.Empty;
+        if (!string.IsNullOrEmpty(value))
+        {
+            isParsed = decimal.TryParse(value, out result);
+            if (isParsed)
+            {
+                result = decimal.Round(result, UptoDecimals);
+            }
+        }
+        if (isParsed is false)
+        {
+            validationErrorMessage = $"{FieldIdentifier.FieldName} field isn't valid.";
+        }
+        return isParsed;
+    }
+    private string ManipulateDecimalString(decimal value)
+    {
+        value = decimal.Round(value, UptoDecimals);
+        var s = value.ToString();
+        return s;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        MaskedInputInterop.OnValueChanged -= OnValueChangedFromInterop;
+        base.Dispose(disposing);
+    }
+}
