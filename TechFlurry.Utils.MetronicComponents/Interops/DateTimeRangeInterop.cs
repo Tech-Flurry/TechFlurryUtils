@@ -1,11 +1,8 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TechFlurry.Utils.MetronicComponents.Common;
-using TechFlurry.Utils.MetronicComponents.FormControls.Dates;
 using TechFlurry.Utils.MetronicComponents.Models;
 
 namespace TechFlurry.Utils.MetronicComponents.Interops
@@ -19,22 +16,16 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         void AddPredefinedRange(string rangeTitle, DateTime startDate, DateTime endDate);
         void Init(DateTime startDate, DateTime endDate, string id, string applyCss, string cancelCss, string dateFormat, bool includeTime, bool isSingleDatePicker, bool showDropDown, int? timePickerIncement = null);
     }
-    internal class DateTimeRangeInterop : IDisposable, IDateTimeRangeInterop
+    internal class DateTimeRangeInterop : InteropBase, IDateTimeRangeInterop
     {
-        private readonly IJSRuntime _jsRuntime;
-        private Task<IJSObjectReference> _module;
         private Dictionary<string, DateTime[]> _predefinedRanges;
 
 
-        public DateTimeRangeInterop(IJSRuntime jsRuntime)
+        public DateTimeRangeInterop(IJSRuntime jsRuntime) : base($"../{Constants.CONTENT_BASE_PATH}js/date-time-range-interop.js", jsRuntime)
         {
-            _jsRuntime = jsRuntime;
         }
 
         public event EventHandler<DateRange> OnDateRangeChanged;
-
-
-        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"../{Constants.CONTENT_BASE_PATH}js/date-time-range-interop.js").AsTask();
 
         public void AddPredefinedRange(string rangeTitle, DateTime startDate, DateTime endDate)
         {
@@ -58,11 +49,6 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
                 End = parsedEndDate,
                 Start = parsedStartDate
             });
-        }
-
-        public void Dispose()
-        {
-            ((IDisposable)_module)?.Dispose();
         }
     }
 }

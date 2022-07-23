@@ -16,20 +16,16 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         void InitSearchFunction(Func<string, Task<SearchResultDataModel>> searchFunction);
     }
 
-    internal class GlobalSearchInterop : IDisposable, IGlobalSearchInterop
+    internal class GlobalSearchInterop : InteropBase, IGlobalSearchInterop
     {
-        private readonly IJSRuntime _jsRuntime;
         private Func<string, Task<SearchResultDataModel>> _searchFunction;
-        private Task<IJSObjectReference> _module;
         private bool isHighlighted = false;
         private string highlightedStartTag, highlightedEndTag;
 
-        public GlobalSearchInterop(IJSRuntime jsRuntime)
-        {
-            _jsRuntime = jsRuntime;
-        }
 
-        public Task<IJSObjectReference> Module => _module ??= _jsRuntime.InvokeAsync<IJSObjectReference>("import", $"../{Constants.CONTENT_BASE_PATH}js/global-search-interop.js").AsTask();
+        public GlobalSearchInterop(IJSRuntime jsRuntime) : base($"../{Constants.CONTENT_BASE_PATH}js/global-search-interop.js", jsRuntime)
+        {
+        }
 
         public async void Init(string elementId, string iconId)
         {
@@ -52,11 +48,6 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         public void InitSearchFunction(Func<string, Task<SearchResultDataModel>> searchFunction)
         {
             _searchFunction = searchFunction;
-        }
-
-        public void Dispose()
-        {
-            ((IDisposable)_module)?.Dispose();
         }
 
         [JSInvokable]
