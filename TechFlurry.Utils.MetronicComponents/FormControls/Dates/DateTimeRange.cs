@@ -54,12 +54,16 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
             };
         }
 
-        private void OnDateRangeChanged(object sender, DateRange e)
+        private async void OnDateRangeChanged(object sender, DateRange e)
         {
             Value = e;
             CurrentValueAsString = DateFormat is not null ? e.ToString(DateFormat.Value.ToCSharpDateFormat()) : e.ToString();
-            StateHasChanged();
             OnValueChanged?.Invoke(Value);
+            if (ValueChanged.HasDelegate)
+            {
+                await ValueChanged.InvokeAsync(Value);
+            }
+            StateHasChanged();
         }
         protected override string FormatValueAsString(DateRange value)
         {
@@ -91,7 +95,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Dates
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            id = "dt_" + Functions.GenerateElementId();
+            id ??= "dt_" + Functions.GenerateElementId();
             name = string.IsNullOrEmpty(Name)
                     ? name = Functions.GenerateElementId()
                     : name = Name;
