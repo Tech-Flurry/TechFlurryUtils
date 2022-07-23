@@ -85,5 +85,10 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Text.Internal
             }
             return isParsed;
         }
+        protected override void Dispose(bool disposing)
+        {
+            MaskedInputInterop.OnValueChanged -= OnValueChangedFromInterop;
+            base.Dispose(disposing);
+        }
     }
 }
