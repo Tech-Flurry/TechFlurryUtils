@@ -29,13 +29,13 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         public async void InitEmailMask(string id)
         {
             var module = await Module;
-            await module.InvokeVoidAsync("initEmailMask", id);
+            await module.InvokeVoidAsync("initEmailMask", id, DotNetObjectReference.Create(this), nameof(OnChange));
         }
 
         public async void InitDecimalMask(string id)
         {
             var module = await Module;
-            await module.InvokeVoidAsync("initDecimalMask", id);
+            await module.InvokeVoidAsync("initDecimalMask", id, DotNetObjectReference.Create(this), nameof(OnChange));
         }
 
         [JSInvokable]

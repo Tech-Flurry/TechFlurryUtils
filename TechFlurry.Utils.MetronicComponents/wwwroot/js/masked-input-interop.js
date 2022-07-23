@@ -11,7 +11,7 @@ export function init (id, mask, placeholder, isAutoUnmask, isNumeric, dotNetRefe
     });
 }
 
-export function initEmailMask (id) {
+export function initEmailMask (id, dotNetReference, changeCallback) {
     $(id).inputmask({
         mask: "*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]",
         greedy: false,
@@ -27,10 +27,16 @@ export function initEmailMask (id) {
             }
         }
     });
+    $(id).on('change', function (e) {
+        dotNetReference.invokeMethodAsync(changeCallback, $(id).val());
+    });
 }
 
-export function initDecimalMask (id) {
+export function initDecimalMask (id, dotNetReference, changeCallback) {
     $(id).inputmask('decimal', {
         rightAlignNumerics: false
+    });
+    $(id).on('change', function (e) {
+        dotNetReference.invokeMethodAsync(changeCallback, $(id).val());
     });
 }

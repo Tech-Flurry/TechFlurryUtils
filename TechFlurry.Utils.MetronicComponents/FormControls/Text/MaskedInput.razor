@@ -1,5 +1,5 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
-@inherits InputBase<string>
+﻿@using TechFlurry.Utils.MetronicComponents.FormControls.Text.Internal
+@inherits MaskedInputBase
 
 <input class="form-control @CssClass" id="@id" name="@name" @bind-value="Value"  type="text" @attributes="inputAttributes" />
 @if (ShowHelpText)
