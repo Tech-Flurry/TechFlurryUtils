@@ -4,7 +4,7 @@ using TechFlurry.Utils.MetronicComponents.Common;
 
 namespace TechFlurry.Utils.MetronicComponents.Interops
 {
-    public interface IMaskedInputInterop
+    internal interface IMaskedInputInterop
     {
         event EventHandler<string> OnValueChanged;
 

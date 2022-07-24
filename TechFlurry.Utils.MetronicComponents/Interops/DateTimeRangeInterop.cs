@@ -7,7 +7,7 @@ using TechFlurry.Utils.MetronicComponents.Models;
 
 namespace TechFlurry.Utils.MetronicComponents.Interops
 {
-    public interface IDateTimeRangeInterop
+    internal interface IDateTimeRangeInterop
     {
         Task<IJSObjectReference> Module { get; }
 

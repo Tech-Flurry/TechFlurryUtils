@@ -25,7 +25,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.Text.Internal
         public Action<string> OnValueChanged { get; set; }
 
         [Inject]
-        public IMaskedInputInterop MaskedInputInterop { get; set; }
+        internal IMaskedInputInterop MaskedInputInterop { get; set; }
 
         protected override string FormatValueAsString(string value)
         {
