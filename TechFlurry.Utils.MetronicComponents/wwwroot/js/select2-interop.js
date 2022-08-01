@@ -80,13 +80,49 @@ function customMatcher (params, data, dotNetReference, searchCallback) {
 export function initSingleSelect (id, placeholder, isClearAllowed, isSearchable, minSearchResults, minimumInputLength, maximumInputLength, dotNetReference, changeCallback, closingClalback, closeCallback, openingCallback, openCallback, selectingCallabck, selectCallback, unselectingCallback, unselectCallback, clearingCallback, clearCallback, searchCallback) {
 
     if (isSearchable) {
-        
+
+        $.fn.select2.amd.define("CustomSelectAdapter", ["select2/utils", "select2/data/select", "select2/data/minimumInputLength", "select2/data/maximumInputLength"], function (Utils, Select, MinimumInputLength, MaximumInputLength) {
+            Select.prototype.matches = async function (params, data) {
+                var matcher = this.options.get('matcher');
+                return await matcher(params, data);
+            };
+            Select.prototype.query = async function (params, callback) {
+                var data = [];
+                var self = this;
+
+                var $options = this.$element.children();
+
+
+                for (var i in $options) {
+                    if (!$options[i].tagName || ($options[i].tagName.toLowerCase() !== 'option' && $options[i].tagName.toLowerCase() !== 'optgroup')) {
+                        break;
+                    }
+
+                    var $option = $($options[i]);
+                    var option = self.item($option);
+                    var matches = await self.matches(params, option);
+                    if (matches !== null) {
+                        data.push(matches);
+                    }
+                }
+                callback({
+                    results: data
+                });
+            };
+
+            var customSelectAdapter = Utils.Decorate(Select, MinimumInputLength);
+            customSelectAdapter = Utils.Decorate(customSelectAdapter, MaximumInputLength);
+            return customSelectAdapter;
+        });
+
+
         $(id).select2({
             placeholder: placeholder,
             allowClear: isClearAllowed,
             minimumResultsForSearch: minSearchResults,
             minimumInputLength: minimumInputLength,
             maximumInputLength: maximumInputLength,
+            dataAdapter: $.fn.select2.amd.require("CustomSelectAdapter"),
             matcher: async function (params, data) {
                 if ($.trim(params.term) === '') {
                     return data;
@@ -111,8 +147,6 @@ export function initSingleSelect (id, placeholder, isClearAllowed, isSearchable,
                 }
                 //No Item
                 return null;
-                console.log(params);
-                console.log(data);
             }
         });
     }
