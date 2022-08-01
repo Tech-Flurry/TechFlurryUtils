@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TechFlurry.Utils.MetronicComponents.FormControls.SelectBoxes.Select2.Internal;
 using TechFlurry.Utils.MetronicComponents.Interops;
 using TechFlurry.Utils.MetronicComponents.Models;
+using TechFlurry.Utils.MetronicComponents.Params;
 
 namespace TechFlurry.Utils.MetronicComponents.FormControls.SelectBoxes.Select2
 {
@@ -21,7 +22,7 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.SelectBoxes.Select2
         [Parameter]
         public List<Select2Item<TId>> Items { get; set; }
         [Parameter]
-        public Func<ValueTask<List<Select2Item<TId>>>> ItemsProvider { get; set; }
+        public Func<Select2SearchParams, ValueTask<List<Select2Item<TId>>>> ItemsProvider { get; set; }
 
         public SingleSelectBox()
         {
@@ -63,7 +64,25 @@ namespace TechFlurry.Utils.MetronicComponents.FormControls.SelectBoxes.Select2
             await base.OnParametersSetAsync();
             if (ItemsProvider is not null)
             {
-                Items = await ItemsProvider();
+                Items = await ItemsProvider(new Select2SearchParams
+                {
+                    SearchTerm = string.Empty,
+                    Group = string.Empty
+                });
+                if (IsSearchable)
+                {
+                    Interop.CustomSearchFunction = async (searchTerm) =>
+                    {
+                        var items = await ItemsProvider(searchTerm);
+                        return items is not null ? items.Select(x => new Select2SearchItem
+                        {
+                            Disabled = x.IsDisabled,
+                            Id = x.Id.ToString(),
+                            Selected = x.IsSelected,
+                            Text = x.Text
+                        }).ToList() : new List<Select2SearchItem>();
+                    };
+                }
             }
             SetDefaultSelectedValue();
         }

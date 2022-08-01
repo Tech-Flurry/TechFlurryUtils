@@ -80,7 +80,6 @@ function customMatcher (params, data, dotNetReference, searchCallback) {
 export function initSingleSelect (id, placeholder, isClearAllowed, isSearchable, minSearchResults, minimumInputLength, maximumInputLength, dotNetReference, changeCallback, closingClalback, closeCallback, openingCallback, openCallback, selectingCallabck, selectCallback, unselectingCallback, unselectCallback, clearingCallback, clearCallback, searchCallback) {
 
     if (isSearchable) {
-
         $.fn.select2.amd.define("CustomSelectAdapter", ["select2/utils", "select2/data/select", "select2/data/minimumInputLength", "select2/data/maximumInputLength"], function (Utils, Select, MinimumInputLength, MaximumInputLength) {
             Select.prototype.matches = async function (params, data) {
                 var matcher = this.options.get('matcher');
@@ -129,16 +128,13 @@ export function initSingleSelect (id, placeholder, isClearAllowed, isSearchable,
                 }
                 if (typeof data.children !== 'undefined') {
                     //Grouped Item
-                    var filterItems = [];
-                    data.children.forEach(function (e) {
-                        filterItems.push({ id: e.id, text: e.text, isDisabled: e.disabled, selected: e.selected });
-                    });
-                    var result = await dotNetReference.invokeMethodAsync(searchCallback, params.term, filterItems);
+                    var result = await dotNetReference.invokeMethodAsync(searchCallback, params.term, data.children, data.text);
                     if (result.length) {
                         var modifiedData = $.extend({}, data, true);
-                        modifiedData.children = data.children.filter(function (x) {
-                            return result.some((r) => r.id === x.id);
-                        });
+                        modifiedData.children = result;
+                        //modifiedData.children = data.children.filter(function (x) {
+                        //    return result.some((r) => r.id === x.id);
+                        //});
                         return modifiedData;
                     }
                 }

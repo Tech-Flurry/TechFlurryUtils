@@ -6,11 +6,15 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TechFlurry.Utils.MetronicComponents.Common;
+using TechFlurry.Utils.MetronicComponents.Models;
+using TechFlurry.Utils.MetronicComponents.Params;
 
 namespace TechFlurry.Utils.MetronicComponents.Interops
 {
     internal interface ISelect2Interop
     {
+        Func<Select2SearchParams, Task<List<Select2SearchItem>>> CustomSearchFunction { get; set; }
+
         event EventHandler<string> OnValueChanged;
         event EventHandler OnClosing;
         event EventHandler OnClose;
@@ -38,6 +42,8 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
         public Select2Interop(IJSRuntime jsRuntime) : base($"../{Constants.CONTENT_BASE_PATH}js/select2-interop.js", jsRuntime)
         {
         }
+
+        public Func<Select2SearchParams, Task<List<Select2SearchItem>>> CustomSearchFunction { get; set; }
 
         public event EventHandler<string> OnValueChanged;
         public event EventHandler OnClosing;
@@ -138,17 +144,22 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
             OnClear?.Invoke(this, new EventArgs());
         }
         [JSInvokable]
-        public List<JsonElement> Search(string term, JsonElement[] data)
+        public async Task<List<Select2SearchItem>> Search(string term, Select2SearchItem[] data, string group)
         {
-            List<JsonElement> result = new List<JsonElement>();
-            foreach (var item in data)
+            var result = data is not null
+                            ? data.ToList()
+                            : new List<Select2SearchItem>();
+            if (CustomSearchFunction is not null)
             {
-                var id = item.GetProperty("id").GetString();
-                var text = item.GetProperty("text").GetString();
-                if (text.ToLower().Contains(term.ToLower()))
+                result = await CustomSearchFunction(new Select2SearchParams
                 {
-                    result.Add(item);
-                }
+                    SearchTerm = term,
+                    Group = group
+                });
+            }
+            else
+            {
+                result = result.Where(x => x.Text.ToLower().Contains(term.ToLower())).ToList();
             }
             return result;
         }
