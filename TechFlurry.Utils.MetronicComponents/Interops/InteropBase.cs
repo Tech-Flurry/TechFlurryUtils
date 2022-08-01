@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TechFlurry.Utils.MetronicComponents.Interops
 {
-    public abstract class InteropBase : IDisposable
+    public abstract class InteropBase : IDisposable, IAsyncDisposable
     {
         private readonly string _filePath;
         protected readonly IJSRuntime _jsRuntime;
@@ -24,6 +24,11 @@ namespace TechFlurry.Utils.MetronicComponents.Interops
             {
                 ((IDisposable)_module).Dispose();
             }
+        }
+
+        public virtual ValueTask DisposeAsync()
+        {
+            return ValueTask.CompletedTask;
         }
     }
 }

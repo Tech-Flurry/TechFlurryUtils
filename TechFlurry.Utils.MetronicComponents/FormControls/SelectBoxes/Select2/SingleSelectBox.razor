@@ -1,0 +1,50 @@
+﻿@using TechFlurry.Utils.MetronicComponents.FormControls.SelectBoxes.Select2.Internal
+@typeparam TId
+@inherits Select2Base<TId>
+
+
+<select class="form-control select2" @attributes="inputAttributes">
+    @foreach (var group in Items.GroupBy(x => x.Group))
+    {
+        <option label="Label"></option>
+        if (!string.IsNullOrEmpty(group.Key))
+        {
+            <optgroup label="@group.Key">
+                @foreach (var item in group.Select(x => x))
+                {
+                    Dictionary<string, object> optionAttributes = new Dictionary<string, object>();
+                    if (item.IsSelected)
+                    {
+                        optionAttributes.Add("selected", "selected");
+                    }
+                    if (item.IsDisabled)
+                    {
+                        optionAttributes.Add("disabled", "disabled");
+                    }
+                    <option value="@item.Id" @attributes="optionAttributes">@item.Text</option>
+                }
+            </optgroup>
+        }
+        else
+        {
+            @foreach (var item in group.Select(x => x))
+            {
+                Dictionary<string, object> optionAttributes = new Dictionary<string, object>();
+                if (item.IsSelected)
+                {
+                    optionAttributes.Add("selected", "selected");
+                }
+                if (item.IsDisabled)
+                {
+                    optionAttributes.Add("disabled", "disabled");
+                }
+                <option value="@item.Id" @attributes="optionAttributes">@item.Text</option>
+            }
+        }
+    }
+</select>
+
+
+@code {
+
+}
